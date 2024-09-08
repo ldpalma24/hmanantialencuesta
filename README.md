@@ -1,2 +1,0 @@
-# hmanantialencuesta
-Hotel Manantial Encuesta
