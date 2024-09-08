@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encuesta de Satisfacción</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Incluye los scripts de Firebase -->
+    <script type="module">
+        // Importar las funciones necesarias del SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+        // Configuración de Firebase de tu proyecto
+        const firebaseConfig = {
+            apiKey: "AIzaSyCm0rLeyEVSwHGwx35EVFQxSZz82fYc-KI",
+            authDomain: "encuesta-de07e.firebaseapp.com",
+            projectId: "encuesta-de07e",
+            storageBucket: "encuesta-de07e.appspot.com",
+            messagingSenderId: "319902812159",
+            appId: "1:319902812159:web:f8c2b47ec40250ed3809ca",
+            measurementId: "G-RQ02SBSFPX"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Manejo del formulario
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('surveyForm');
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+
+                // Guardar los datos en Firestore
+                try {
+                    await addDoc(collection(db, 'encuestas'), {
+                        nombre: data.nombre,
+                        habitacion: data.habitacion,
+                        llegada: parseInt(data.llegada),
+                        comentarios: data.comentarios
+                    });
+
+                    alert('¡Gracias por completar la encuesta!');
+                    form.reset();
+                } catch (error) {
+                    console.error('Error al enviar la encuesta:', error);
+                    alert('Ocurrió un error al enviar la encuesta. Inténtalo de nuevo.');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Encuesta de Satisfacción</h1>
+        <form id="surveyForm">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+
+            <label for="habitacion">Número de Habitación:</label>
+            <input type="text" id="habitacion" name="habitacion" required>
+
+            <h3>Califica tu experiencia (1: Insuficiente, 5: Excelente)</h3>
+            <div class="question">
+                <label>La llegada:</label>
+                <div class="rating">
+                    <input type="radio" name="llegada" value="1" required>1
+                    <input type="radio" name="llegada" value="2">2
+                    <input type="radio" name="llegada" value="3">3
+                    <input type="radio" name="llegada" value="4">4
+                    <input type="radio" name="llegada" value="5">5
+                </div>
+            </div>
+
+            <label for="comentarios">Comentarios adicionales:</label>
+            <textarea id="comentarios" name="comentarios"></textarea>
+
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+</body>
+</html>
