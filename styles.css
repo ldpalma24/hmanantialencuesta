@@ -1,135 +1,136 @@
 /* Estilos generales */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
+    background-color: #f2f2f2;
     margin: 0;
     padding: 0;
 }
+/* Centrar el contenedor del logo */
+.logo {
+    width: 70%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px; /* Espacio entre el logo y la encuesta */
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 
+/* Opcional: Ajustes para que el SVG sea flexible */
+.logo svg {
+    max-width: 100%;
+    height: auto;
+}
 .container {
-    max-width: 90%;  /* Ajuste del ancho para dispositivos móviles */
+    max-width: 600px;
     margin: 50px auto;
     padding: 20px;
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 15px;
-    animation: fadeIn 1s ease-in-out;
+    background-color: #e0e0e0;
+    box-shadow: -20px -20px 60px #bebebe,
+                20px 20px 60px #ffffff;;
+    border-radius: 50px;
 }
 
-/* Encabezado */
-h1 {
+h5 {
+    font-family: 'lato', sans-serif;
+    align-items: center;
     text-align: center;
-    color: #01ffff;
-    font-size: 2rem; /* Usa rem para mayor flexibilidad */
+    font-size: 30px;
     margin-bottom: 20px;
 }
 
-/* Elementos del formulario */
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: #555;
+p {
+    font-size: 18px;
+    margin-bottom: 10px;
 }
 
-/* Campos de texto y área de comentarios */
-input[type="text"], textarea {
-    width: 100%;
-    padding: 1rem;  /* Usa rem para ajuste flexible */
+input[type="text"] {
+    width: 96.4%;
+    padding: 10px;
     margin-bottom: 20px;
-    border: 2px solid #ccc;
-    border-radius: 12px;
-    background-color: #f4f4f9;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
-    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
 }
 
-input[type="text"]:focus, textarea:focus {
-    border-color: #01ffff;
-    box-shadow: 0 0 8px rgba(1, 255, 255, 0.6), inset 0 2px 5px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    outline: none;
-}
-
-/* Botones de calificación */
 .rating {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
 }
 
-/* Botón */
-button[type="submit"] {
-    width: 100%;
-    padding: 1rem;
+.rating input {
+    margin-right: 10px;
+}
+
+button {
+    padding: 10px 20px;
     background-color: #01ffff;
     color: white;
     border: none;
-    border-radius: 12px;
+    border-radius: 4px;
+    font-size: 16px;
     cursor: pointer;
-    font-size: 1.2rem;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition: background-color 0.3s ease;
 }
 
-button[type="submit"]:hover {
-    background-color: #00bcd4;
-    transform: scale(1.05);
+button:hover {
+    background-color: pink;
 }
 
-/* Animaciones */
-@keyframes fadeIn {
-    from {
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.step {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    transform-origin: top center;
+    transition: transform 1s ease, opacity 0.5s ease;
+    opacity: 1;
+}
+
+.step.active {
+    display: block;
+    position: relative;
+    transform: translateY(0);
+    opacity: 1;
+    background-color: #e0e0e0;
+}
+
+.step.fall {
+    transform: rotateX(90deg) translateY(100%);
+    opacity: 0;
+}
+
+.step.next {
+    transform: translateY(-100%);
+    opacity: 0;
+}
+
+.step.appear {
+    animation: appear 0.5s ease forwards;
+}
+
+@keyframes appear {
+    0% {
+        transform: translateY(-100%);
         opacity: 0;
-        transform: translateY(-10px);
     }
-    to {
-        opacity: 1;
+    100% {
         transform: translateY(0);
-    }
-}
-
-/* Estilos responsivos */
-@media (max-width: 768px) {
-    .container {
-        max-width: 95%;
-        padding: 15px;
-        margin: 20px auto;
-    }
-
-    h1 {
-        font-size: 1.8rem;
-    }
-
-    input[type="text"], textarea {
-        padding: 0.8rem;
-        font-size: 0.9rem;
-    }
-
-    button[type="submit"] {
-        padding: 0.8rem;
-        font-size: 1rem;
-        border-radius: 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    h1 {
-        font-size: 1.5rem;
-    }
-
-    .container {
-        padding: 10px;
-    }
-
-    input[type="text"], textarea {
-        padding: 0.7rem;
-        font-size: 0.8rem;
-    }
-
-    button[type="submit"] {
-        padding: 0.7rem;
-        font-size: 0.9rem;
+        opacity: 1;
     }
 }

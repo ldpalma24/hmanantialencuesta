@@ -1,44 +1,64 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set } from "firebase/database";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+document.addEventListener("DOMContentLoaded", function() {
+    let currentStep = 0;
+    const steps = document.querySelectorAll(".step");
+    const nextBtns = document.querySelectorAll(".next-btn");
+    const prevBtns = document.querySelectorAll(".prev-btn");
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyCm0rLeyEVSwHGwx35EVFQxSZz82fYc-KI",
-  authDomain: "encuesta-de07e.firebaseapp.com",
-  projectId: "encuesta-de07e",
-  storageBucket: "encuesta-de07e.appspot.com",
-  messagingSenderId: "319902812159",
-  appId: "1:319902812159:web:f8c2b47ec40250ed3809ca",
-  measurementId: "G-RQ02SBSFPX"
-};
+    showStep(currentStep); // Muestra la primera sección
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
+    function showStep(stepIndex) {
+        steps.forEach((step, index) => {
+            step.classList.remove("active");
+            if (index === stepIndex) {
+                step.classList.add("active");
+            }
+        });
+        window.scrollTo(0, 0); // Desplazarse hacia arriba al cambiar de paso
+    }
 
-// Formulario de manejo
-const form = document.getElementById('surveyForm');
+    function nextStep() {
+        if (currentStep < steps.length - 1) {
+            const current = steps[currentStep];
+            const next = steps[currentStep + 1];
 
-form.addEventListener('submit', (event) => {
-    event.preventDefault();
+            // Añadir la animación de caída
+            current.classList.add('fall');
+            
+            // Esperar a que termine la animación de caída para mostrar la siguiente
+            setTimeout(() => {
+                current.classList.remove('active', 'fall');
+                next.classList.add('active', 'appear');
 
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
+                // Remover la clase de aparición tras la animación
+                setTimeout(() => {
+                    next.classList.remove('appear');
+                }, 500);
+            }, 1000);
 
-    // Referencia a la base de datos
-    const surveyRef = ref(database, 'surveys/' + Date.now()); // Usa un timestamp para un ID único
+            currentStep++;
+        }
+    }
 
-    // Guardar datos en Realtime Database
-    set(surveyRef, data)
-    .then(() => {
-        console.log('Datos enviados:', data);
-        alert('¡Gracias por completar la encuesta!');
-    })
-    .catch((error) => {
-        console.error('Error al enviar los datos:', error);
-        alert('Lo sentimos, ocurrió un error al enviar la encuesta. Por favor, inténtalo de nuevo más tarde.');
+    function prevStep() {
+        if (currentStep > 0) {
+            currentStep--;
+            showStep(currentStep);
+        }
+    }
+
+    nextBtns.forEach(btn => {
+        btn.addEventListener("click", nextStep);
+    });
+
+    prevBtns.forEach(btn => {
+        btn.addEventListener("click", prevStep);
+    });
+
+    // Manejar el envío del formulario
+    const form = document.getElementById("surveyForm");
+    form.addEventListener("submit", function(event) {
+        event.preventDefault();
+        alert("Gracias por completar la encuesta.");
+        
     });
 });

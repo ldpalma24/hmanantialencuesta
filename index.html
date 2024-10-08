@@ -5,86 +5,159 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Encuesta de Satisfacción</title>
     <link rel="stylesheet" href="styles.css">
-
-    <!-- Incluye los scripts de Firebase -->
-    <script type="module">
-        // Importar las funciones necesarias del SDK
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-
-        // Configuración de Firebase de tu proyecto
-        const firebaseConfig = {
-            apiKey: "AIzaSyCm0rLeyEVSwHGwx35EVFQxSZz82fYc-KI",
-            authDomain: "encuesta-de07e.firebaseapp.com",
-            projectId: "encuesta-de07e",
-            storageBucket: "encuesta-de07e.appspot.com",
-            messagingSenderId: "319902812159",
-            appId: "1:319902812159:web:f8c2b47ec40250ed3809ca",
-            measurementId: "G-RQ02SBSFPX"
-        };
-
-        // Inicializar Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Manejo del formulario
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('surveyForm');
-
-            form.addEventListener('submit', async (event) => {
-                event.preventDefault();
-
-                const formData = new FormData(form);
-                const data = Object.fromEntries(formData.entries());
-
-                // Guardar los datos en Firestore
-                try {
-                    await addDoc(collection(db, 'encuestas'), {
-                        nombre: data.nombre,
-                        habitacion: data.habitacion,
-                        llegada: parseInt(data.llegada),
-                        comentarios: data.comentarios
-                    });
-
-                    alert('¡Gracias por completar la encuesta!');
-                    form.reset();
-                } catch (error) {
-                    console.error('Error al enviar la encuesta:', error);
-                    alert('Ocurrió un error al enviar la encuesta. Inténtalo de nuevo.');
-                }
-            });
-        });
-    </script>
 </head>
 <body>
     <div class="container">
-        <h1>Encuesta de Satisfacción</h1>
-        <form id="surveyForm">
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" required>
-
-            <label for="habitacion">Número de Habitación:</label>
-            <input type="text" id="habitacion" name="habitacion" required>
-
-            <h3>Califica tu experiencia (1: Insuficiente, 5: Excelente)</h3>
-            <div class="question">
-                <label>La llegada:</label>
-                <div class="rating">
-                    <input type="radio" name="llegada" value="1" required>1
-                    <input type="radio" name="llegada" value="2">2
-                    <input type="radio" name="llegada" value="3">3
-                    <input type="radio" name="llegada" value="4">4
-                    <input type="radio" name="llegada" value="5">5
-                </div>
-            </div>
-
-            <label for="comentarios">Comentarios adicionales:</label>
-            <textarea id="comentarios" name="comentarios"></textarea>
-
-            <button type="submit">Enviar</button>
-        </form>
+    <div class="logo-container">
+        <img class="logo" src="logoHotel.png">
     </div>
+        <div class="card">
+            <div class="card-header bg-primary">
+                <h5 class="card-title text-white text-center">Encuesta de Satisfacción</h5>
+                <p class="subtitulo">¡Cada comentario nos ayuda a crecer y a mejorar para brindarle un mejor servicio!</p>
+            </div>
+            <div class="modal-body">
+                <form id="surveyForm">
+                    <!-- Primera pregunta -->
+                    <div class="step active">
+                        <p><strong>¿Cuál es tu nombre?</strong></p>
+                        <input type="text" id="nombre" name="nombre" required>
+                        <button type="button" class="next-btn">Siguiente</button>
+                    </div>
+
+                    <!-- Segunda pregunta -->
+                    <div class="step">
+                        <p><strong>¿Cuál es tu número de habitación?</strong></p>
+                        <input type="text" id="habitacion" name="habitacion" required>
+                        <button type="button" class="prev-btn">Anterior</button>
+                        <button type="button" class="next-btn">Siguiente</button>
+                    </div>
+
+                    <!-- Tercera pregunta -->
+                    <div class="step">
+                        <p><strong>Califica la llegada / Check-in</strong></p>
+                        <div class="rating">
+                            <input type="radio" name="llegada" value="1" required> Excelente
+                            <input type="radio" name="llegada" value="2"> Bueno
+                            <input type="radio" name="llegada" value="3"> Regular
+                            <input type="radio" name="llegada" value="4"> Insuficiente
+                        </div>
+                        <button type="button" class="prev-btn">Anterior</button>
+                        <button type="button" class="next-btn">Siguiente</button>
+                    </div>
+
+                    <!-- Preguntas adicionales (similares a la estructura de llegada) -->
+                    <div class="step">
+                        <p><strong>Califica la habitación / The Room</strong></p>
+                        <div class="rating">
+                            <input type="radio" name="habitacion-cal" value="1" required> Excelente
+                            <input type="radio" name="habitacion-cal" value="2"> Bueno
+                            <input type="radio" name="habitacion-cal" value="3"> Regular
+                            <input type="radio" name="habitacion-cal" value="4"> Insuficiente
+                        </div>
+                        <button type="button" class="prev-btn">Anterior</button>
+                        <button type="button" class="next-btn">Siguiente</button>
+                    </div>
+
+                    <div class="step">
+                        <p><strong>Califica el baño / Bathroom</strong></p>
+                        <div class="rating">
+                            <input type="radio" name="bano" value="1" required> Excelente
+                            <input type="radio" name="bano" value="2"> Bueno
+                            <input type="radio" name="bano" value="3"> Regular
+                            <input type="radio" name="bano" value="4"> Insuficiente
+                        </div>
+                        <button type="button" class="prev-btn">Anterior</button>
+                        <button type="button" class="next-btn">Siguiente</button>
+                    </div>
+
+                    <div class="step">
+                        <p><strong>Califica Red Sport Bar</strong></p>
+                        <div class="rating">
+                            <input type="radio" name="red-sport-bar" value="1" required> Excelente
+                            <input type="radio" name="red-sport-bar" value="2"> Bueno
+                            <input type="radio" name="red-sport-bar" value="3"> Regular
+                            <input type="radio" name="red-sport-bar" value="4"> Insuficiente
+                        </div>
+                        <button type="button" class="prev-btn">Anterior</button>
+                        <button type="button" class="next-btn">Siguiente</button>
+                    </div>
+
+                    <div class="step">
+                        <p><strong>Califica Manolo's</strong></p>
+                        <div class="rating">
+                            <input type="radio" name="manolos" value="1" required> Excelente
+                            <input type="radio" name="manolos" value="2"> Bueno
+                            <input type="radio" name="manolos" value="3"> Regular
+                            <input type="radio" name="manolos" value="4"> Insuficiente
+                        </div>
+                        <button type="button" class="prev-btn">Anterior</button>
+                        <button type="button" class="next-btn">Siguiente</button>
+                    </div>
+
+                    <div class="step">
+                        <p><strong>Califica el desayuno / Breakfast</strong></p>
+                        <div class="rating">
+                            <input type="radio" name="desayuno" value="1" required> Excelente
+                            <input type="radio" name="desayuno" value="2"> Bueno
+                            <input type="radio" name="desayuno" value="3"> Regular
+                            <input type="radio" name="desayuno" value="4"> Insuficiente
+                        </div>
+                        <button type="button" class="prev-btn">Anterior</button>
+                        <button type="button" class="next-btn">Siguiente</button>
+                    </div>
+
+                    <div class="step">
+                        <p><strong>Califica el servicio a la habitación / Room Service</strong></p>
+                        <div class="rating">
+                            <input type="radio" name="room-service" value="1" required> Excelente
+                            <input type="radio" name="room-service" value="2"> Bueno
+                            <input type="radio" name="room-service" value="3"> Regular
+                            <input type="radio" name="room-service" value="4"> Insuficiente
+                        </div>
+                        <button type="button" class="prev-btn">Anterior</button>
+                        <button type="button" class="next-btn">Siguiente</button>
+                    </div>
+
+                    <div class="step">
+                        <p><strong>Califica la piscina / Pool</strong></p>
+                        <div class="rating">
+                            <input type="radio" name="piscina" value="1" required> Excelente
+                            <input type="radio" name="piscina" value="2"> Bueno
+                            <input type="radio" name="piscina" value="3"> Regular
+                            <input type="radio" name="piscina" value="4"> Insuficiente
+                        </div>
+                        <button type="button" class="prev-btn">Anterior</button>
+                        <button type="button" class="next-btn">Siguiente</button>
+                    </div>
+
+                    <div class="step">
+                        <p><strong>Califica la salida / Check-out</strong></p>
+                        <div class="rating">
+                            <input type="radio" name="salida" value="1" required> Excelente
+                            <input type="radio" name="salida" value="2"> Bueno
+                            <input type="radio" name="salida" value="3"> Regular
+                            <input type="radio" name="salida" value="4"> Insuficiente
+                        </div>
+                        <button type="button" class="prev-btn">Anterior</button>
+                        <button type="button" class="next-btn">Siguiente</button>
+                    </div>
+                    <div class="step">
+                        <p><strong>Calificación general del hotel</strong></p>
+                        <div class="rating">
+                            <input type="radio" name="calificacion-general" value="1" required> Excelente
+                            <input type="radio" name="calificacion-general" value="2"> Bueno
+                            <input type="radio" name="calificacion-general" value="3"> Regular
+                            <input type="radio" name="calificacion-general" value="4"> Insuficiente
+                        </div>
+                        <button type="button" class="prev-btn">Anterior</button>
+                        <button onclick="location.href='https://www.instagram.com/hotelmanantialvalencia/'">Llévame a otro lado</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
-
-// FIN DEL CÓDIGO
