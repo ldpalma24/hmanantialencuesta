@@ -2,11 +2,12 @@
   "name": "your-project-name",
   "version": "1.0.0",
   "main": "index.js",
+  "scripts": {
+    "start": "node functions/index.js",
+    "build": "cp -r public/* ./build" 
+  },
   "dependencies": {
     "express": "^4.17.1",
     "exceljs": "^4.2.1"
-  },
-  "scripts": {
-    "start": "node functions/index.js"
   }
 }
