@@ -1,1 +1,11 @@
-npm init -y
+{
+  "name": "your-project-name",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "exceljs": "^4.2.1"
+  },
+  "scripts": {
+    "start": "node functions/index.js"
+  }
