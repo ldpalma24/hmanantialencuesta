@@ -1,5 +1,6 @@
 name: Deploy Survey Page to GitHub Pages
 
+
 on:
   push:
     branches: [ main ]
@@ -14,10 +15,10 @@ jobs:
         with:
           name: survey-files
           path: .
-
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.SECRET_KEY }}
           publish_dir: ./survey-files
-          exclude: '**/*.md'  # Optional: Exclude markdown files (if present)
+          repository_name: ${{ github.repository }}
+          branch: main
