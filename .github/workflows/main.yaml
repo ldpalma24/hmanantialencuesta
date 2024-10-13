@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy Survey Page to GitHub Pages
 
 on:
   push:
@@ -8,20 +8,16 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3   
-
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      - name: Copy project files
+        uses: actions/upload-artifact@v3
         with:
-          node-version: '16'
-      - run: npm install
-      - run: npm run build
-      - uses: actions/upload-artifact@v3   
+          name: survey-files
+          path: .
 
-        with:
-          path: build
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir:   
- ./build
+          publish_dir: ./survey-files
+          exclude: '**/*.md'  # Optional: Exclude markdown files (if present)
