@@ -1,24 +1,21 @@
 name: Deploy Survey Page to GitHub Pages
-
-
 on:
   push:
     branches: [ main ]
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Copy project files
-        uses: actions/upload-artifact@v3
-        with:
-          name: survey-files
-          path: .
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.SECRET_KEY }}
-          publish_dir: ./survey-files
-          repository_name: ${{ github.repository }}
-          branch: main
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
