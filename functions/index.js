@@ -1,57 +1,37 @@
-const {onRequest} = require("firebase-functions/v2/https");
-const {initializeApp} = require("firebase-admin/app");
-const {getFirestore} = require("firebase-admin/firestore");
-const XLSX = require("xlsx");
-const {logger} = require("firebase-functions");
+const express = require('express');
+const exceljs = require('exceljs');
 
-// Inicializa Firebase Admin SDK
-initializeApp();
-const db = getFirestore();
+const app = express();
+const port = 3000;
 
-// Función para exportar datos a Excel
-exports.exportToExcel = onRequest(async (req, res) => {
-  try {
-    // Referencia a la colección de Firestore que contiene las encuestas
-    const encuestasRef = db.collection("encuestas");
-    const snapshot = await encuestasRef.get();
+app.post('/submit-survey', (req, res) => {
+  const data = req.body;
 
-    // Verifica si hay datos
-    if (snapshot.empty) {
-      res.status(404).send("No se encontraron datos.");
-      return;
-    }
+  // Procesar los datos y generar el archivo Excel
+  const workbook = new exceljs.Workbook();
+  const worksheet = workbook.addWorksheet('Survey Data');
 
-    // Crea un array para almacenar los datos
-    const data = [];
-    snapshot.forEach((doc) => {
-      data.push(doc.data());
+  // Agregar encabezados de columna
+  worksheet.columns = [
+    { header: 'Nombre', key: 'nombre' },
+    { header: 'Habitación', key: 'habitacion' },
+    // ... otros encabezados
+  ];
+
+  // Agregar datos de la encuesta
+  worksheet.addRows([data]);
+
+  // Guardar el archivo Excel
+  workbook.xlsx.writeFile('survey_data.xlsx')
+    .then(() => {
+      res.json({ message: 'Survey submitted and data exported to Excel' });
+    })
+    .catch(error => {
+      console.error(error);
+      res.status(500).json({ message: 'Error exporting data to Excel' });
     });
+});
 
-    // Crea una hoja de trabajo de Excel
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Encuestas");
-
-    // Genera el archivo Excel en formato binario
-    const excelBuffer = XLSX.write(
-        workbook,
-        {type: "buffer", bookType: "xlsx"},
-    );
-
-    // Configura la respuesta HTTP para descargar el archivo
-    res.setHeader(
-        "Content-Disposition",
-        "attachment; filename=encuestas.xlsx",
-    );
-    res.setHeader(
-        "Content-Type",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    );
-
-    // Envía el archivo Excel como respuesta
-    res.status(200).send(excelBuffer);
-  } catch (error) {
-    logger.error("Error al exportar los datos: ", error);
-    res.status(500).send("Error al exportar los datos.");
-  }
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
 });
