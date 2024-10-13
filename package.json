@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node functions/index.js",
-    "build": "cp -r public/* ./build" 
+    "build": "mkdir -p build && cp -r public/* build/"
   },
   "dependencies": {
     "express": "^4.17.1",
