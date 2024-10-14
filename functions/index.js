@@ -1,10 +1,16 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const exceljs = require('exceljs');
+const app = express();
+
+app.use(bodyParser.json());
+
 app.post('/submit-survey', async (req, res) => {
   try {
     const data = req.body;
     
     // Verifica que los datos se reciban correctamente
     console.log('Datos recibidos:', data);
-
     if (Object.keys(data).length === 0) {
       console.error('No se recibieron datos.');
       res.status(400).json({ message: 'No se recibieron datos.' });
@@ -17,15 +23,13 @@ app.post('/submit-survey', async (req, res) => {
     worksheet.columns = [
       { header: 'Nombre', key: 'nombre' },
       { header: 'Habitación', key: 'habitacion' },
-      // ... otros encabezados
+      // otros encabezados
     ];
 
-    worksheet.addRows([data]);
+    worksheet.addRow(data);
 
     await workbook.xlsx.writeFile('data/survey_data.xlsx');
-
     console.log('Archivo guardado en data/survey_data.xlsx');
-
     res.json({ message: 'Survey submitted and data exported to Excel' });
 
     const { exec } = require('child_process');
@@ -41,4 +45,8 @@ app.post('/submit-survey', async (req, res) => {
     console.error('Error en el servidor:', error);
     res.status(500).json({ message: 'Error exporting data to Excel' });
   }
+});
+
+app.listen(3000, () => {
+  console.log('Server running on http://localhost:3000');
 });
