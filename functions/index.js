@@ -1,17 +1,7 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const exceljs = require('exceljs');
-const app = express();
-const port = 3000;
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
 app.post('/submit-survey', async (req, res) => {
   try {
     const data = req.body;
 
-    // Verificar los datos recibidos
     console.log('Datos recibidos:', data);
 
     const workbook = new exceljs.Workbook();
@@ -27,7 +17,6 @@ app.post('/submit-survey', async (req, res) => {
 
     await workbook.xlsx.writeFile('data/survey_data.xlsx');
 
-    // Confirmar que el archivo ha sido guardado
     console.log('Archivo guardado en data/survey_data.xlsx');
 
     res.json({ message: 'Survey submitted and data exported to Excel' });
@@ -42,11 +31,7 @@ app.post('/submit-survey', async (req, res) => {
       console.error(`stderr: ${stderr}`);
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error en el servidor:', error);
     res.status(500).json({ message: 'Error exporting data to Excel' });
   }
-});
-
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
 });
