@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log('Datos del formulario:', data);
 
     try {
-      const response = await fetch('/submit-survey', {
+      const response = await fetch('http://localhost:3000/submit-survey', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
