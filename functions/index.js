@@ -1,8 +1,15 @@
 app.post('/submit-survey', async (req, res) => {
   try {
     const data = req.body;
-
+    
+    // Verifica que los datos se reciban correctamente
     console.log('Datos recibidos:', data);
+
+    if (Object.keys(data).length === 0) {
+      console.error('No se recibieron datos.');
+      res.status(400).json({ message: 'No se recibieron datos.' });
+      return;
+    }
 
     const workbook = new exceljs.Workbook();
     const worksheet = workbook.addWorksheet('Survey Data');
