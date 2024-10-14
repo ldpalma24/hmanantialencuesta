@@ -58,6 +58,8 @@ document.addEventListener("DOMContentLoaded", function() {
       data[key] = value;
     });
 
+    console.log('Datos del formulario:', data);
+
     try {
       const response = await fetch('/submit-survey', {
         method: 'POST',
