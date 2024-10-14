@@ -1,30 +1,37 @@
 const express = require('express');
 const exceljs = require('exceljs');
-
 const app = express();
 const port = 3000;
+
+app.use(express.json());
 
 app.post('/submit-survey', (req, res) => {
   const data = req.body;
 
-  // Procesar los datos y generar el archivo Excel
   const workbook = new exceljs.Workbook();
   const worksheet = workbook.addWorksheet('Survey Data');
 
-  // Agregar encabezados de columna
   worksheet.columns = [
     { header: 'Nombre', key: 'nombre' },
     { header: 'Habitación', key: 'habitacion' },
     // ... otros encabezados
   ];
 
-  // Agregar datos de la encuesta
   worksheet.addRows([data]);
 
-  // Guardar el archivo Excel
-  workbook.xlsx.writeFile('survey_data.xlsx')
+  workbook.xlsx.writeFile('data/survey_data.xlsx')
     .then(() => {
       res.json({ message: 'Survey submitted and data exported to Excel' });
+
+      const { exec } = require('child_process');
+      exec('git add data/survey_data.xlsx && git commit -m "Update survey data" && git push', (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Error executing command: ${error}`);
+          return;
+        }
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+      });
     })
     .catch(error => {
       console.error(error);
