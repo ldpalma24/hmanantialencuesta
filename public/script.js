@@ -1,64 +1,81 @@
 document.addEventListener("DOMContentLoaded", function() {
-    let currentStep = 0;
-    const steps = document.querySelectorAll(".step");
-    const nextBtns = document.querySelectorAll(".next-btn");
-    const prevBtns = document.querySelectorAll(".prev-btn");
+  let currentStep = 0;
+  const steps = document.querySelectorAll(".step");
+  const nextBtns = document.querySelectorAll(".next-btn");
+  const prevBtns = document.querySelectorAll(".prev-btn");
+  showStep(currentStep); // Muestra la primera sección
 
-    showStep(currentStep); // Muestra la primera sección
+  function showStep(stepIndex) {
+    steps.forEach((step, index) => {
+      step.classList.remove("active");
+      if (index === stepIndex) {
+        step.classList.add("active");
+      }
+    });
+    window.scrollTo(0, 0); // Desplazarse hacia arriba al cambiar de paso
+  }
 
-    function showStep(stepIndex) {
-        steps.forEach((step, index) => {
-            step.classList.remove("active");
-            if (index === stepIndex) {
-                step.classList.add("active");
-            }
-        });
-        window.scrollTo(0, 0); // Desplazarse hacia arriba al cambiar de paso
+  function nextStep() {
+    if (currentStep < steps.length - 1) {
+      const current = steps[currentStep];
+      const next = steps[currentStep + 1];
+      current.classList.add('fall');
+      setTimeout(() => {
+        current.classList.remove('active', 'fall');
+        next.classList.add('active', 'appear');
+        setTimeout(() => {
+          next.classList.remove('appear');
+        }, 500);
+      }, 1000);
+      currentStep++;
     }
+  }
 
-    function nextStep() {
-        if (currentStep < steps.length - 1) {
-            const current = steps[currentStep];
-            const next = steps[currentStep + 1];
-
-            // Añadir la animación de caída
-            current.classList.add('fall');
-            
-            // Esperar a que termine la animación de caída para mostrar la siguiente
-            setTimeout(() => {
-                current.classList.remove('active', 'fall');
-                next.classList.add('active', 'appear');
-
-                // Remover la clase de aparición tras la animación
-                setTimeout(() => {
-                    next.classList.remove('appear');
-                }, 500);
-            }, 1000);
-
-            currentStep++;
-        }
+  function prevStep() {
+    if (currentStep > 0) {
+      currentStep--;
+      showStep(currentStep);
     }
+  }
 
-    function prevStep() {
-        if (currentStep > 0) {
-            currentStep--;
-            showStep(currentStep);
-        }
-    }
+  nextBtns.forEach(btn => {
+    btn.addEventListener("click", nextStep);
+  });
 
-    nextBtns.forEach(btn => {
-        btn.addEventListener("click", nextStep);
+  prevBtns.forEach(btn => {
+    btn.addEventListener("click", prevStep);
+  });
+
+  // Manejar el envío del formulario
+  const form = document.getElementById("surveyForm");
+  form.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(form);
+    const data = {};
+
+    formData.forEach((value, key) => {
+      data[key] = value;
     });
 
-    prevBtns.forEach(btn => {
-        btn.addEventListener("click", prevStep);
-    });
+    try {
+      const response = await fetch('/submit-survey', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
 
-    // Manejar el envío del formulario
-    const form = document.getElementById("surveyForm");
-    form.addEventListener("submit", function(event) {
-        event.preventDefault();
-        alert("Gracias por completar la encuesta.");
-        
-    });
+      const result = await response.json();
+      console.log('Success:', result);
+
+      // Redirigir después de enviar correctamente
+      alert('Encuesta enviada con éxito');
+      window.location.href = 'https://www.instagram.com/hotelmanantialvalencia/';
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Hubo un error al enviar la encuesta');
+    }
+  });
 });
