@@ -11,6 +11,7 @@ app.post('/submit-survey', async (req, res) => {
   try {
     const data = req.body;
 
+    // Verificar los datos recibidos
     console.log('Datos recibidos:', data);
 
     const workbook = new exceljs.Workbook();
@@ -25,6 +26,10 @@ app.post('/submit-survey', async (req, res) => {
     worksheet.addRows([data]);
 
     await workbook.xlsx.writeFile('data/survey_data.xlsx');
+
+    // Confirmar que el archivo ha sido guardado
+    console.log('Archivo guardado en data/survey_data.xlsx');
+
     res.json({ message: 'Survey submitted and data exported to Excel' });
 
     const { exec } = require('child_process');
