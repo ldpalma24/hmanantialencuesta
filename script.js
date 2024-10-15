@@ -50,16 +50,12 @@ document.addEventListener("DOMContentLoaded", function() {
   const form = document.getElementById("surveyForm");
   form.addEventListener("submit", async function(event) {
     event.preventDefault();
-
     const formData = new FormData(form);
     const data = {};
-
     formData.forEach((value, key) => {
       data[key] = value;
     });
-
     console.log('Datos del formulario:', data);
-
     try {
       const response = await fetch('http://localhost:3000/submit-survey', {
         method: 'POST',
@@ -68,10 +64,8 @@ document.addEventListener("DOMContentLoaded", function() {
         },
         body: JSON.stringify(data)
       });
-
       const result = await response.json();
       console.log('Success:', result);
-
       // Redirigir después de enviar correctamente
       alert('Encuesta enviada con éxito');
       window.location.href = 'https://www.instagram.com/hotelmanantialvalencia/';
