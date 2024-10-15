@@ -29,6 +29,7 @@ app.post('/submit-survey', async (req, res) => {
     ];
 
     worksheet.addRow(data);
+    console.log('Datos añadidos al worksheet:', data);
 
     await workbook.xlsx.writeFile('data/survey_data.xlsx');
     console.log('Archivo guardado en data/survey_data.xlsx');
