@@ -1,13 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors'); // Importar cors
+const cors = require('cors');
 const { MongoClient } = require('mongodb');
 const app = express();
 
 const uri = "TU_CADENA_DE_CONEXION"; // Reemplaza con tu cadena de conexión de Cosmos DB
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-app.use(cors({ origin: 'https://ldpalma24.github.io' })); // Configurar CORS para permitir solicitudes desde tu dominio
+app.use(cors({ origin: 'https://ldpalma24.github.io', methods: ['GET', 'POST'], allowedHeaders: ['Content-Type'] })); 
 app.use(bodyParser.json());
 
 client.connect(err => {
