@@ -4,10 +4,10 @@ const cors = require('cors');
 const { MongoClient } = require('mongodb');
 const app = express();
 
-const uri = "TU_CADENA_DE_CONEXION"; // Reemplaza con tu cadena de conexión de Cosmos DB
+const uri = "mongodb+srv://sudomanantial:<password>@hmvalencia2024.global.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-app.use(cors({ origin: 'https://ldpalma24.github.io', methods: ['GET', 'POST'], allowedHeaders: ['Content-Type'] })); 
+app.use(cors({ origin: 'https://ldpalma24.github.io' }));
 app.use(bodyParser.json());
 
 client.connect(err => {
