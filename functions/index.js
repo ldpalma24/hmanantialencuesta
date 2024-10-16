@@ -7,7 +7,13 @@ const app = express();
 const uri = "mongodb+srv://sudomanantial:<password>@hmvalencia2024.global.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-app.use(cors({ origin: 'https://ldpalma24.github.io' }));
+app.use(cors({ 
+  origin: 'https://ldpalma24.github.io', 
+  methods: ['GET', 'POST'], 
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true // Habilita 'Access-Control-Allow-Credentials'
+}));
+
 app.use(bodyParser.json());
 
 client.connect(err => {
@@ -29,7 +35,6 @@ client.connect(err => {
         return;
       }
 
-      // Insertar datos en la base de datos
       await collection.insertOne(data);
       console.log('Datos insertados en la base de datos');
 
