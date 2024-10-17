@@ -16,7 +16,7 @@ app.use(cors({
 
 app.use(bodyParser.json());
 
-// Configurar cabeceras CORS en todas las respuestas
+// Middleware adicional para habilitar CORS en todas las respuestas
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'https://ldpalma24.github.io');
   res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
