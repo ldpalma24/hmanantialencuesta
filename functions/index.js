@@ -4,7 +4,7 @@ const cors = require('cors');
 const { MongoClient } = require('mongodb');
 const app = express();
 
-const uri = "mongodb+srv://ldpalma24:adminmongodb@cluster0.jsmfe.mongodb.net/<dbname>?retryWrites=true&w=majority&appName=Cluster0";
+const uri = "mongodb+srv://ldpalma24:adminmongodb@cluster0.jsmfe.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(cors({
@@ -34,7 +34,7 @@ client.connect(err => {
     return;
   }
 
-  const collection = client.db("<dbname>").collection("encuestas");
+  const collection = client.db("test").collection("encuestas");
 
   app.post('/submit-survey', async (req, res) => {
     try {
@@ -57,7 +57,8 @@ client.connect(err => {
     }
   });
 
-  app.listen(3000, () => {
-    console.log('Server running on http://localhost:3000');
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
   });
 });
