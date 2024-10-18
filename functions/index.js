@@ -4,7 +4,7 @@ const cors = require('cors');
 const { MongoClient } = require('mongodb');
 const app = express();
 
-const uri = "mongodb+srv://ldpalma24:adminmongodb@cluster0.jsmfe.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; // Reemplaza con tu cadena de conexión de MongoDB Atlas
+const uri = "mongodb+srv://ldpalma24:adminmongodb@cluster0.jsmfe.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(cors({
