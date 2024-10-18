@@ -1,12 +1,3 @@
-app.use(cors({
-  origin: 'https://ldpalma24.github.io',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
-
-app.use(bodyParser.json());
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -16,7 +7,15 @@ const app = express();
 const uri = "mongodb+srv://ldpalma24:adminmongodb@cluster0.jsmfe.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; // Reemplaza con tu cadena de conexión de MongoDB Atlas
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-// Middleware adicional para habilitar CORS en todas las respuestas
+app.use(cors({
+  origin: 'https://ldpalma24.github.io',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+
+app.use(bodyParser.json());
+
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'https://ldpalma24.github.io');
   res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
