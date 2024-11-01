@@ -4,7 +4,7 @@ const cors = require('cors');
 const { MongoClient } = require('mongodb');
 const app = express();
 
-const uri = "mongodb+srv://sudomanantial:<password>@hmvalencia2024.global.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000"; // Reemplaza con tu cadena de conexión de Cosmos DB
+const uri = "mongodb+srv://ldpalma24:<db_password>@cluster0.jsmfe.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(cors({
@@ -33,7 +33,7 @@ client.connect(err => {
     return;
   }
 
-  const collection = client.db("test").collection("encuestas");
+  const collection = client.db("<dbname>").collection("encuestas");
 
   app.post('/submit-survey', async (req, res) => {
     try {
@@ -49,10 +49,10 @@ client.connect(err => {
       await collection.insertOne(data);
       console.log('Datos insertados en la base de datos');
 
-      res.json({ message: 'Survey submitted and data saved to Azure Cosmos DB' });
+      res.json({ message: 'Survey submitted and data saved to MongoDB Atlas' });
     } catch (error) {
       console.error('Error en el servidor:', error);
-      res.status(500).json({ message: 'Error saving data to Azure Cosmos DB' });
+      res.status(500).json({ message: 'Error saving data to MongoDB Atlas' });
     }
   });
 
