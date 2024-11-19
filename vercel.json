@@ -6,6 +6,10 @@
       "use": "@vercel/node"
     },
     {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
       "src": "public/**/*",
       "use": "@vercel/static"
     }
@@ -20,7 +24,7 @@
       "dest": "/index.html"
     },
     {
-      "src": "/(.*)",
+      "src": "/public/(.*)",
       "dest": "/public/$1"
     }
   ]
