@@ -57,13 +57,14 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     console.log('Datos del formulario:', data);
     try {
-      const response = await fetch('https://hmanantialencuesta.vercel.app/api/submit-survey', { 
+      const response = await fetch('https://your-backend-url.onrailway.app/api/submit-survey', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
       });
+
       const result = await response.json();
       console.log('Success:', result);
       // Redirigir después de enviar correctamente
