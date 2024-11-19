@@ -32,7 +32,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post('/submit-survey', async (req, res) => {
+// Cambio en la ruta para manejar las solicitudes POST
+app.post('/api/submit-survey', async (req, res) => {
   try {
     const data = req.body;
     console.log('Datos recibidos:', data);
