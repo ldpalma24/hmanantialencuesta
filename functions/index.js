@@ -1,14 +1,19 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { MongoClient } = require('mongodb');
+const { Pool } = require('pg');
 const app = express();
 
-const uri = "mongodb+srv://<username>:<password>@cluster0.mongodb.net/<dbname>?retryWrites=true&w=majority"; // Reemplaza con tu cadena de conexión de MongoDB Atlas
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const pool = new Pool({
+  user: 'myuser',
+  host: 'localhost',
+  database: 'mydatabase',
+  password: 'mypassword',
+  port: 5432
+});
 
 app.use(cors({
-  origin: 'https://ldpalma24.github.io',
+  origin: 'https://tu-dominio.vercel.app',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -17,7 +22,7 @@ app.use(cors({
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://ldpalma24.github.io');
+  res.header('Access-Control-Allow-Origin', 'https://tu-dominio.vercel.app');
   res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -27,37 +32,28 @@ app.use((req, res, next) => {
   next();
 });
 
-client.connect(err => {
-  if (err) {
-    console.error('Error al conectar a la base de datos', err);
-    return;
-  }
+app.post('/submit-survey', async (req, res) => {
+  try {
+    const data = req.body;
+    console.log('Datos recibidos:', data);
 
-  const collection = client.db("<dbname>").collection("encuestas");
-
-  app.post('/submit-survey', async (req, res) => {
-    try {
-      const data = req.body;
-      console.log('Datos recibidos:', data);
-
-      if (Object.keys(data).length === 0) {
-        console.error('No se recibieron datos.');
-        res.status(400).json({ message: 'No se recibieron datos.' });
-        return;
-      }
-
-      await collection.insertOne(data);
-      console.log('Datos insertados en la base de datos');
-
-      res.json({ message: 'Survey submitted and data saved to MongoDB Atlas' });
-    } catch (error) {
-      console.error('Error en el servidor:', error);
-      res.status(500).json({ message: 'Error saving data to MongoDB Atlas' });
+    if (Object.keys(data).length === 0) {
+      console.error('No se recibieron datos.');
+      res.status(400).json({ message: 'No se recibieron datos.' });
+      return;
     }
-  });
 
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+    await pool.query('INSERT INTO encuestas (data) VALUES ($1)', [data]);
+    console.log('Datos insertados en la base de datos');
+
+    res.json({ message: 'Survey submitted and data saved to PostgreSQL' });
+  } catch (error) {
+    console.error('Error en el servidor:', error);
+    res.status(500).json({ message: 'Error saving data to PostgreSQL' });
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
