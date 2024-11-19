@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy to GitHub Pages with PostgreSQL
 
 on:
   push:
@@ -8,6 +8,20 @@ on:
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: mydatabase
+          POSTGRES_USER: myuser
+          POSTGRES_PASSWORD: mypassword
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
       - name: Checkout repository
@@ -23,6 +37,19 @@ jobs:
 
       - name: Build project
         run: npm run build
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          until pg_isready -h localhost -p 5432 -U myuser; do
+            echo "Waiting for PostgreSQL to be ready..."
+            sleep 5
+          done
+
+      - name: Run database migrations
+        run: |
+          psql -h localhost -U myuser -d mydatabase -c "CREATE TABLE IF NOT EXISTS encuestas (id SERIAL PRIMARY KEY, data JSONB);"
+        env:
+          PGPASSWORD: mypassword
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
