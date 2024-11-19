@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     console.log('Datos del formulario:', data);
     try {
-      const response = await fetch('https://your-backend-url.onrailway.app/api/submit-survey', {
+      const response = await fetch('https://nodejs-production-bd02.up.railway.app/api/submit-survey', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
