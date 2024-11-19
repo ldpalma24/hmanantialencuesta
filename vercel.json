@@ -6,17 +6,13 @@
       "use": "@vercel/node"
     },
     {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
       "src": "public/**/*",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/submit-survey",
+      "src": "/api/submit-survey",
       "dest": "/index.js"
     },
     {
