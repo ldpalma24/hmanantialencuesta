@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     console.log('Datos del formulario:', data);
     try {
-      const response = await fetch('https://hmguestcomments.azurewebsites.net/submit-survey', {
+      const response = await fetch('https://hmanantialencuesta.vercel.app/submit-survey', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
