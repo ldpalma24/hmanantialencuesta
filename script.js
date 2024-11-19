@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     console.log('Datos del formulario:', data);
     try {
-      const response = await fetch('https://hmanantialencuesta.vercel.app/submit-survey', { 
+      const response = await fetch('https://hmanantialencuesta.vercel.app/api/submit-survey', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
