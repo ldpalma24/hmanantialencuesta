@@ -2,8 +2,8 @@
   "version": 2,
   "builds": [
     {
-      "src": "index.html",
-      "use": "@vercel/static"
+      "src": "index.js",
+      "use": "@vercel/node"
     },
     {
       "src": "public/**/*",
@@ -12,8 +12,8 @@
   ],
   "routes": [
     {
-      "src": "/",
-      "dest": "/index.html"
+      "src": "/submit-survey",
+      "dest": "/index.js"
     },
     {
       "src": "/(.*)",
