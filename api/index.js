@@ -23,6 +23,9 @@ app.use(
   })
 );
 
+// Habilita las solicitudes OPTIONS (preflight)
+app.options('*', cors()); 
+
 // Middleware para parsear JSON
 app.use(express.json());
 
