@@ -52,10 +52,12 @@ app.options('/api/submit-survey', (req, res) => {
   res.status(200).end();
 });
 
-// Middleware para manejar rutas no definidas (404)
-app.use((req, res) => {
-  res.status(404).json({ message: 'Ruta no encontrada.' });
+// Middleware para registrar todas las solicitudes entrantes
+app.use((req, res, next) => {
+  console.log(`Solicitud entrante: Método=${req.method}, Ruta=${req.path}`);
+  next();
 });
+
 
 // Inicializar el servidor
 const port = process.env.PORT || 3000;
