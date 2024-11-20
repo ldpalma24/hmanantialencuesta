@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
-const httpProxy = require('http-proxy-middleware'); // Importar el middleware de proxy
 
 // Inicializar la aplicación de Express
 const app = express();
@@ -18,27 +17,17 @@ const pool = new Pool({
 app.use(
   cors({
     origin: 'https://hmanantialencuesta.vercel.app', // Permite solicitudes desde tu frontend en Vercel
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  // Asegúrate de permitir OPTIONS
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
   })
 );
 
-// Habilita las solicitudes OPTIONS (preflight)
-app.options('*', cors());
+// Middleware para manejar solicitudes OPTIONS (preflight)
+app.options('*', cors()); // Permite todas las rutas OPTIONS con CORS habilitado
 
 // Middleware para parsear JSON
 app.use(express.json());
-
-// Configuración del Proxy para redirigir las solicitudes a tu backend
-app.use('/api', httpProxy({
-  target: 'https://nodejs-production-bd02.up.railway.app', // URL de tu backend en Railway
-  changeOrigin: true,
-  pathRewrite: {
-    '^/api': '/api' // Redirigir las rutas /api
-  },
-  secure: false // Desactivar la verificación SSL si es necesario
-}));
 
 // Rutas
 app.post('/api/submit-survey', async (req, res) => {
