@@ -13,18 +13,13 @@ const pool = new Pool({
     : false
 });
 
-// Middleware para habilitar CORS
-app.use(
-  cors({
-    origin: 'https://hmanantialencuesta.vercel.app', // Permite solicitudes desde tu frontend en Vercel
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  // Asegúrate de permitir OPTIONS
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
-  })
-);
-
-// Middleware para manejar solicitudes OPTIONS (preflight)
-app.options('*', cors()); // Permite todas las rutas OPTIONS con CORS habilitado
+// Middleware para habilitar CORS en todas las rutas
+app.use(cors({
+  origin: 'https://hmanantialencuesta.vercel.app', // Permite solicitudes desde tu frontend en Vercel
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  // Asegúrate de permitir OPTIONS
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 
 // Middleware para parsear JSON
 app.use(express.json());
@@ -47,6 +42,9 @@ app.post('/api/submit-survey', async (req, res) => {
     res.status(500).json({ message: 'Error al guardar los datos en PostgreSQL.' });
   }
 });
+
+// Middleware para manejar todas las rutas OPTIONS (preflight)
+app.options('*', cors()); // Permite todas las rutas OPTIONS con CORS habilitado
 
 // Middleware para manejar otras rutas no definidas
 app.use((req, res) => {
