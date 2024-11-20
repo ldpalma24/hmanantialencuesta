@@ -44,10 +44,7 @@ app.post('/api/submit-survey', async (req, res) => {
   }
 });
 
-// Ruta para OPTIONS (preflight CORS)
-app.options('/api/submit-survey', cors());
-
-// Middleware para manejar rutas no definidas
+// Middleware para manejar rutas no definidas (404)
 app.use((req, res) => {
   res.status(404).json({ message: 'Ruta no encontrada.' });
 });
