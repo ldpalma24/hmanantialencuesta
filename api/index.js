@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
+const { createProxyMiddleware } = require('http-proxy-middleware'); // Requerimos el paquete para el proxy
 
 // Inicializar la aplicación de Express
 const app = express();
@@ -47,6 +48,15 @@ app.post('/api/submit-survey', async (req, res) => {
     res.status(500).json({ message: 'Error al guardar los datos en PostgreSQL.' });
   }
 });
+
+// Aquí estamos usando el proxy para redirigir las solicitudes de la API
+app.use('/api/submit-survey', createProxyMiddleware({
+  target: 'https://nodejs-production-bd02.up.railway.app', // El servidor de Railway
+  changeOrigin: true, // Cambia el origen de la solicitud para evitar CORS
+  pathRewrite: {
+    '^/api/submit-survey': '/api/submit-survey', // Mantenemos la ruta de la API
+  },
+}));
 
 // Middleware para manejar otras rutas no definidas
 app.use((req, res) => {
