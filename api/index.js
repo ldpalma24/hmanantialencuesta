@@ -64,3 +64,10 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);
 });
+
+app._router.stack.forEach(function (middleware) {
+  if (middleware.route) { // Rutas registradas
+    console.log(`Ruta registrada: ${middleware.route.path}`);
+  }
+});
+
