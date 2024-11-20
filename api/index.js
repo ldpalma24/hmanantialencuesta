@@ -60,11 +60,11 @@ app.get(`${basePath}/test`, (req, res) => {
   res.status(200).json({ message: 'Ruta /test funcionando correctamente.' });
 });
 
-// Middleware para registrar todas las solicitudes entrantes y rutas no encontradas
 app.use((req, res, next) => {
-  console.log(`Solicitud no encontrada: ${req.method} ${req.originalUrl}`);
-  res.status(404).json({ message: `Ruta no encontrada: ${req.originalUrl}` });
+  console.log(`Solicitud entrante: ${req.method} ${req.path}`);
+  next();
 });
+
 
 app._router.stack.forEach((middleware) => {
   if (middleware.route) {
