@@ -53,10 +53,10 @@ app.options('/api/submit-survey', (req, res) => {
 });
 
 // Middleware para registrar todas las solicitudes entrantes
-app.use((req, res, next) => {
-  console.log(`Solicitud entrante: Método=${req.method}, Ruta=${req.path}`);
-  next();
+app.get('/test', (req, res) => {
+  res.status(200).json({ message: 'Ruta /test funcionando correctamente.' });
 });
+
 
 
 // Inicializar el servidor
