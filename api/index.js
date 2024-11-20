@@ -1,30 +1,16 @@
-const express = require('express');
-const cors = require('cors');
-const { Pool } = require('pg');
-
-// Inicializar la aplicación de Express
-const app = express();
-
-// Configuración de PostgreSQL
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL, // Lee la URL desde las variables de entorno
-  ssl: process.env.NODE_ENV === 'production' // Usa SSL en producción
-    ? { rejectUnauthorized: false }
-    : false
-});
-
-// Middleware para habilitar CORS en todas las rutas
-app.use(cors({
-  origin: 'https://hmanantialencuesta.vercel.app', // Permite solicitudes desde tu frontend en Vercel
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  // Asegúrate de permitir OPTIONS
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
-
-// Middleware para parsear JSON
-app.use(express.json());
+// Middleware para habilitar CORS
+app.use(
+  cors({
+    origin: 'https://hmanantialencuesta.vercel.app', // Permite solicitudes desde tu frontend en Vercel
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+  })
+);
 
 // Rutas
+app.options('/api/submit-survey', cors());  // Asegúrate de que OPTIONS sea manejado correctamente
+
 app.post('/api/submit-survey', async (req, res) => {
   try {
     const data = req.body;
@@ -42,14 +28,3 @@ app.post('/api/submit-survey', async (req, res) => {
     res.status(500).json({ message: 'Error al guardar los datos en PostgreSQL.' });
   }
 });
-
-// Middleware para manejar todas las rutas OPTIONS (preflight)
-app.options('*', cors()); // Permite todas las rutas OPTIONS con CORS habilitado
-
-// Middleware para manejar otras rutas no definidas
-app.use((req, res) => {
-  res.status(404).json({ message: 'Ruta no encontrada.' });
-});
-
-// Exporta la aplicación para que Vercel la maneje
-module.exports = app;
