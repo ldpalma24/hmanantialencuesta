@@ -63,7 +63,6 @@ document.addEventListener("DOMContentLoaded", function() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
-        mode: 'no-cors',
       });
 
       const result = await response.json();
