@@ -44,6 +44,14 @@ app.post('/api/submit-survey', async (req, res) => {
   }
 });
 
+// Ruta para OPTIONS (preflight CORS) - Respuesta explícita para las solicitudes OPTIONS
+app.options('/api/submit-survey', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://hmanantialencuesta.vercel.app');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.status(200).end();
+});
+
 // Middleware para manejar rutas no definidas (404)
 app.use((req, res) => {
   res.status(404).json({ message: 'Ruta no encontrada.' });
@@ -54,8 +62,3 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);
 });
-
-app.get('/', (req, res) => {
-  res.send('¡El servidor está funcionando!');
-});
-
