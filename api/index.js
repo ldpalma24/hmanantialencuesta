@@ -66,13 +66,18 @@ app.use((req, res, next) => {
   res.status(404).json({ message: `Ruta no encontrada: ${req.originalUrl}` });
 });
 
-// Registrar todas las rutas activas
-console.log('Rutas registradas en el servidor:');
-app._router.stack.forEach(function (middleware) {
-  if (middleware.route) { // Rutas registradas
-    console.log(`  ${middleware.route.path}`);
+app._router.stack.forEach((middleware) => {
+  if (middleware.route) {
+    console.log(`Ruta activa: ${middleware.route.path}`);
+  } else if (middleware.name === 'router') {
+    middleware.handle.stack.forEach((handler) => {
+      if (handler.route) {
+        console.log(`Ruta activa: ${handler.route.path}`);
+      }
+    });
   }
 });
+
 
 // Inicializar el servidor
 const port = process.env.PORT || 3000;
