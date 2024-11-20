@@ -15,7 +15,7 @@ const pool = new Pool({
 // Middleware para habilitar CORS
 app.use(
   cors({
-    origin: 'https://hmanantialencuesta.vercel.app', // Permite solicitudes desde el frontend de Vercel
+    origin: '*',
     methods: ['GET', 'POST', 'OPTIONS'], // Asegúrate de que OPTIONS está permitido
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
