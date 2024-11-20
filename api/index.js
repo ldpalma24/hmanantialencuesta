@@ -1,59 +1,54 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const { Pool } = require('pg');
 
+// Inicializar la aplicación de Express
 const app = express();
-
-const { Pool } = require('pg');
 
 // Configuración de PostgreSQL
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL, // Usa la variable de entorno DATABASE_URL
-  ssl: {
-    rejectUnauthorized: false // Railway requiere SSL, excepto en entornos internos
-  }
+  connectionString: process.env.DATABASE_URL, // Lee la URL desde las variables de entorno
+  ssl: process.env.NODE_ENV === 'production' // Usa SSL en producción
+    ? { rejectUnauthorized: false }
+    : false
 });
 
-module.exports = pool;
+// Middleware para habilitar CORS
+app.use(
+  cors({
+    origin: 'https://hmanantialencuesta.vercel.app', // Permite solicitudes desde tu frontend en Vercel
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+  })
+);
 
+// Middleware para parsear JSON
+app.use(express.json());
 
-
-app.use(cors({
-  origin: 'https://hmanantialencuesta.vercel.app', 
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
-
-app.use(bodyParser.json());
-
+// Rutas
 app.post('/api/submit-survey', async (req, res) => {
   try {
     const data = req.body;
+
     if (!data || Object.keys(data).length === 0) {
       return res.status(400).json({ message: 'No se recibieron datos.' });
     }
 
+    // Inserta datos en la tabla `encuestas`
     await pool.query('INSERT INTO encuestas (data) VALUES ($1)', [data]);
-    res.json({ message: 'Survey submitted and data saved to PostgreSQL' });
+
+    res.status(200).json({ message: 'Encuesta enviada y guardada correctamente.' });
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ message: 'Error saving data to PostgreSQL' });
+    console.error('Error al guardar datos:', error.message);
+    res.status(500).json({ message: 'Error al guardar los datos en PostgreSQL.' });
   }
 });
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://hmanantialencuesta.vercel.app');
-  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(204).end();
-  }
-  next();
+// Middleware para manejar otras rutas no definidas
+app.use((req, res) => {
+  res.status(404).json({ message: 'Ruta no encontrada.' });
 });
 
-
-// Exporta el controlador para que Vercel lo maneje
+// Exporta la aplicación para que Vercel la maneje
 module.exports = app;
