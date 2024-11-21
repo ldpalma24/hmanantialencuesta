@@ -56,9 +56,10 @@ app.options(`${basePath}/api/submit-survey`, (req, res) => {
 });
 
 // Ruta de prueba
-app.get(`${basePath}/test`, (req, res) => {
-  res.status(200).json({ message: 'Ruta /test funcionando correctamente.' });
+app.get('/', (req, res) => {
+  res.status(200).send('Ruta raíz funcionando correctamente.');
 });
+
 
 app.use((req, res, next) => {
   console.log(`Solicitud entrante: ${req.method} ${req.path}`);
