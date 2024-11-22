@@ -1,7 +1,18 @@
-// Dependencias
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
+const app = express();
+
+app.use(cors());
+// Configurar otras rutas y middlewares
+
+app.post('/api/submit-survey', (req, res) => {
+  // Lógica para manejar la solicitud de la encuesta
+  res.send('Encuesta recibida');
+});
+
+app.listen(3000, () => {
+  console.log('Servidor corriendo en el puerto 3000');
+});
 
 // Inicializar la aplicación Express
 const app = express();
