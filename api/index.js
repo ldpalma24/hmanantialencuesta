@@ -6,6 +6,9 @@ const { Pool } = require('pg');
 // Inicializar la aplicación Express
 const app = express();
 
+const connectionString =
+  "postgresql://postgres:KoAhRTsHVPEnTVAzryXhCFdpHRZSxOSq@autorack.proxy.rlwy.net:49504/railway";
+
 // Configuración de PostgreSQL
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL, // URL de la base de datos
