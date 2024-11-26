@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "node functions/server.js",
+    "start": "node api/server.js",
     "build": "mkdir -p build && cp -r public/* build/"
   },
   "dependencies": {
