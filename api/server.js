@@ -4,96 +4,33 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
-app.post('/api/submit-survey', (req, res) => {
-  // Lógica para manejar la solicitud de la encuesta
-  res.send('Encuesta recibida');
-});
-
-app.listen(3000, () => {
-  console.log('Servidor corriendo en el puerto 3000');
-});
-
-// Inicializar la aplicación Express
-
-const connectionString =
-  "postgresql://postgres:KoAhRTsHVPEnTVAzryXhCFdpHRZSxOSq@autorack.proxy.rlwy.net:49504/railway";
-
-// Configuración de PostgreSQL
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL, // URL de la base de datos
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false // SSL en producción
-});
-
-// Prefijo dinámico (Railway podría requerirlo)
-const basePath = process.env.BASE_PATH || ''; // Define BASE_PATH en Railway si es necesario
-
-// Middleware para habilitar CORS
-app.use(
-  cors({
-    origin: '*', // Cambiar a 'https://hmanantialencuesta.vercel.app' si es necesario.
-    methods: ['GET', 'POST', 'OPTIONS'], // Permite GET, POST y OPTIONS.
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-  })
-);
-
-// Middleware para parsear JSON
-app.use(express.json());
-
-// Ruta para la solicitud POST
-app.post(`${basePath}/api/submit-survey`, async (req, res) => {
-  try {
-    const data = req.body;
-
-    if (!data || Object.keys(data).length === 0) {
-      return res.status(400).json({ message: 'No se recibieron datos.' });
-    }
-
-    // Inserta los datos en la base de datos
-    await pool.query('INSERT INTO encuestas (data) VALUES ($1)', [data]);
-
-    res.status(200).json({ message: 'Encuesta enviada y guardada correctamente.' });
-  } catch (error) {
-    console.error('Error al guardar datos:', error.message);
-    res.status(500).json({ message: 'Error al guardar los datos en PostgreSQL.' });
-  }
-});
-
-// Ruta para OPTIONS (preflight CORS)
-app.options(`${basePath}/api/submit-survey`, (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://hmanantialencuesta.vercel.app');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.status(200).end();
-});
-
-// Ruta de prueba
-app.get('/', (req, res) => {
-  res.status(200).send('Ruta raíz funcionando correctamente.');
-});
-
-
-app.use((req, res, next) => {
-  console.log(`Solicitud entrante: ${req.method} ${req.path}`);
-  next();
-});
-
-
-app._router.stack.forEach((middleware) => {
-  if (middleware.route) {
-    console.log(`Ruta activa: ${middleware.route.path}`);
-  } else if (middleware.name === 'router') {
-    middleware.handle.stack.forEach((handler) => {
-      if (handler.route) {
-        console.log(`Ruta activa: ${handler.route.path}`);
-      }
-    });
-  }
-});
-
-
-// Inicializar el servidor
 const port = process.env.PORT || 3000;
+
+const pool = new Pool({
+  connectionString: 'postgresql://postgres:KoAhRTsHVPEnTVAzryXhCFdpHRZSxOSq@autorack.proxy.rlwy.net:49504/railway',
+});
+
+app.use(bodyParser.json());
+
+// Esta es la ruta raíz que solo sirve una respuesta de texto
+app.get('/', (req, res) => {
+  res.send('Servidor funcionando. Usa /api/survey para enviar datos.');
+});
+
+// Ruta para manejar los envíos de encuestas
+app.post('/api/survey', async (req, res) => {
+  const { response } = req.body;
+  try {
+    const result = await pool.query('INSERT INTO encuestas (response) VALUES ($1) RETURNING *', [response]);
+    console.log(result); // Verifica que el resultado esté correcto
+    res.status(201).json({ message: 'Response saved', result: result.rows });
+  } catch (error) {
+    console.error('Error saving response:', error);
+    res.status(500).json({ error: 'Error saving response' });
+  }
+});
+
+// Asegúrate de que el servidor esté escuchando en el puerto correcto
 app.listen(port, () => {
-  console.log(`Servidor escuchando en el puerto ${port}`);
+  console.log(`Server running at http://localhost:${port}`);
 });
