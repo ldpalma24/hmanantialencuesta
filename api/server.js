@@ -4,9 +4,6 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
-app.use(cors());
-// Configurar otras rutas y middlewares
-
 app.post('/api/submit-survey', (req, res) => {
   // Lógica para manejar la solicitud de la encuesta
   res.send('Encuesta recibida');
