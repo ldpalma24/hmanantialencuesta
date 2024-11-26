@@ -1,5 +1,7 @@
 const express = require('express');
-const cors = require('cors');
+const { Pool } = require('pg');
+const bodyParser = require('body-parser');
+
 const app = express();
 
 app.use(cors());
