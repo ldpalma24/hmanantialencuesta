@@ -15,7 +15,6 @@ app.listen(3000, () => {
 });
 
 // Inicializar la aplicación Express
-const app = express();
 
 const connectionString =
   "postgresql://postgres:KoAhRTsHVPEnTVAzryXhCFdpHRZSxOSq@autorack.proxy.rlwy.net:49504/railway";
