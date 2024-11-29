@@ -64,34 +64,26 @@ document.addEventListener("DOMContentLoaded", function () {
     event.preventDefault();
 
     // Capturar los datos del formulario
-    const nombre = document.getElementById("nombre").value;
-    const nrohab = document.getElementById("nrohab").value;
-    const check_in = document.getElementById("check_in").value;
-    const hab = parseInt(document.getElementById("hab").value);
-    const bath = parseInt(document.getElementById("bath").value);
-    const redp = parseInt(document.getElementById("redp").value);
-    const manolo = parseInt(document.getElementById("manolo").value);
-    const desay = parseInt(document.getElementById("desay").value);
-    const rmserv = parseInt(document.getElementById("rmserv").value);
-    const pool = parseInt(document.getElementById("pool").value);
-    const check_out = document.getElementById("check_out").value;
-    const gneral = parseInt(document.getElementById("gneral").value);
-
-    // Crear objeto con los datos
     const surveyData = {
-      nombre,
-      nrohab,
-      check_in,
-      hab,
-      bath,
-      redp,
-      manolo,
-      desay,
-      rmserv,
-      pool,
-      check_out,
-      gneral,
+      nombre: document.querySelector('[name="nombre"]').value,
+      nrohab: document.querySelector('[name="habitacion"]').value,
+      check_in: document.querySelector('[name="llegada"]:checked')?.value,
+      hab: document.querySelector('[name="habitacion-cal"]:checked')?.value,
+      bath: document.querySelector('[name="bano"]:checked')?.value,
+      redp: document.querySelector('[name="red-sport-bar"]:checked')?.value,
+      manolo: document.querySelector('[name="manolos"]:checked')?.value,
+      desay: document.querySelector('[name="desayuno"]:checked')?.value,
+      rmserv: document.querySelector('[name="room-service"]:checked')?.value,
+      pool: document.querySelector('[name="piscina"]:checked')?.value,
+      check_out: document.querySelector('[name="salida"]:checked')?.value,
+      gneral: document.querySelector('[name="calificacion-general"]:checked')?.value,
     };
+
+    // Validar que todos los campos estén completos
+    if (Object.values(surveyData).some(value => value === undefined || value === "")) {
+      alert("Por favor, responde todas las preguntas antes de enviar.");
+      return;
+    }
 
     // Enviar los datos al backend
     fetch(apiUrl, {
