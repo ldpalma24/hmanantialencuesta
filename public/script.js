@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const steps = document.querySelectorAll(".step");
   const nextBtns = document.querySelectorAll(".next-btn");
   const prevBtns = document.querySelectorAll(".prev-btn");
-  
+
   // Muestra la primera sección al iniciar
   showStep(currentStep);
 
@@ -23,18 +23,18 @@ document.addEventListener("DOMContentLoaded", function () {
     if (currentStep < steps.length - 1) {
       const current = steps[currentStep];
       const next = steps[currentStep + 1];
-      
+
       current.classList.add("fall");
-      
+
       setTimeout(() => {
         current.classList.remove("active", "fall");
         next.classList.add("active", "appear");
-        
+
         setTimeout(() => {
           next.classList.remove("appear");
         }, 500);
       }, 1000);
-      
+
       currentStep++;
     }
   }
@@ -63,8 +63,35 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("surveyForm").addEventListener("submit", function (event) {
     event.preventDefault();
 
-    // Obtener la respuesta del usuario
-    const response = document.getElementById("response").value;
+    // Capturar los datos del formulario
+    const nombre = document.getElementById("nombre").value;
+    const nrohab = document.getElementById("nrohab").value;
+    const check_in = document.getElementById("check_in").value;
+    const hab = parseInt(document.getElementById("hab").value);
+    const bath = parseInt(document.getElementById("bath").value);
+    const redp = parseInt(document.getElementById("redp").value);
+    const manolo = parseInt(document.getElementById("manolo").value);
+    const desay = parseInt(document.getElementById("desay").value);
+    const rmserv = parseInt(document.getElementById("rmserv").value);
+    const pool = parseInt(document.getElementById("pool").value);
+    const check_out = document.getElementById("check_out").value;
+    const gneral = parseInt(document.getElementById("gneral").value);
+
+    // Crear objeto con los datos
+    const surveyData = {
+      nombre,
+      nrohab,
+      check_in,
+      hab,
+      bath,
+      redp,
+      manolo,
+      desay,
+      rmserv,
+      pool,
+      check_out,
+      gneral,
+    };
 
     // Enviar los datos al backend
     fetch(apiUrl, {
@@ -72,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ response }), // Enviar respuesta en formato JSON
+      body: JSON.stringify(surveyData), // Enviar el objeto en formato JSON
     })
       .then(response => {
         if (!response.ok) {
@@ -82,11 +109,11 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .then(data => {
         console.log("Success:", data);
-        alert("Response saved: " + data.message);
+        alert("Encuesta guardada exitosamente: " + data.message);
       })
       .catch(error => {
         console.error("Error:", error);
-        alert("Ocurrió un error al guardar la respuesta.");
+        alert("Ocurrió un error al guardar la encuesta.");
       });
   });
 });

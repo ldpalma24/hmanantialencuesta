@@ -8,9 +8,9 @@
 </head>
 <body>
     <div class="container">
-    <div class="logo-container">
-        <img class="logo" src="/public/logoHotel.PNG">
-    </div>
+        <div class="logo-container">
+            <img class="logo" src="/public/logoHotel.PNG" alt="Logo del Hotel">
+        </div>
         <div class="card">
             <div class="card-header bg-primary">
                 <h5 class="card-title text-white text-center">Encuesta de Satisfacción</h5>
@@ -18,137 +18,146 @@
             </div>
             <div class="modal-body">
                 <form id="surveyForm">
-                    <!-- Primera pregunta -->
+                    <!-- Nombre -->
                     <div class="step active">
                         <p><strong>¿Cuál es tu nombre?</strong></p>
-                        <input type="text" id="nombre" name="nombre" required>
+                        <input type="text" id="nombre" name="nombre" placeholder="Escribe tu nombre" required>
                         <button type="button" class="next-btn">Siguiente</button>
                     </div>
 
-                    <!-- Segunda pregunta -->
+                    <!-- Número de Habitación -->
                     <div class="step">
                         <p><strong>¿Cuál es tu número de habitación?</strong></p>
-                        <input type="text" id="habitacion" name="habitacion" required>
+                        <input type="text" id="nrohab" name="nrohab" placeholder="Ejemplo: 101" required>
                         <button type="button" class="prev-btn">Anterior</button>
                         <button type="button" class="next-btn">Siguiente</button>
                     </div>
 
-                    <!-- Tercera pregunta -->
+                    <!-- Check-in -->
                     <div class="step">
                         <p><strong>Califica la llegada / Check-in</strong></p>
                         <div class="rating">
-                            <input type="radio" name="llegada" value="1" required> Excelente
-                            <input type="radio" name="llegada" value="2"> Bueno
-                            <input type="radio" name="llegada" value="3"> Regular
-                            <input type="radio" name="llegada" value="4"> Insuficiente
+                            <input type="radio" name="check_in" value="1" required> Excelente
+                            <input type="radio" name="check_in" value="2"> Bueno
+                            <input type="radio" name="check_in" value="3"> Regular
+                            <input type="radio" name="check_in" value="4"> Insuficiente
                         </div>
                         <button type="button" class="prev-btn">Anterior</button>
                         <button type="button" class="next-btn">Siguiente</button>
                     </div>
 
-                    <!-- Preguntas adicionales (similares a la estructura de llegada) -->
+                    <!-- Habitación -->
                     <div class="step">
                         <p><strong>Califica la habitación / The Room</strong></p>
                         <div class="rating">
-                            <input type="radio" name="habitacion-cal" value="1" required> Excelente
-                            <input type="radio" name="habitacion-cal" value="2"> Bueno
-                            <input type="radio" name="habitacion-cal" value="3"> Regular
-                            <input type="radio" name="habitacion-cal" value="4"> Insuficiente
+                            <input type="radio" name="hab" value="1" required> Excelente
+                            <input type="radio" name="hab" value="2"> Bueno
+                            <input type="radio" name="hab" value="3"> Regular
+                            <input type="radio" name="hab" value="4"> Insuficiente
                         </div>
                         <button type="button" class="prev-btn">Anterior</button>
                         <button type="button" class="next-btn">Siguiente</button>
                     </div>
 
+                    <!-- Baño -->
                     <div class="step">
                         <p><strong>Califica el baño / Bathroom</strong></p>
                         <div class="rating">
-                            <input type="radio" name="bano" value="1" required> Excelente
-                            <input type="radio" name="bano" value="2"> Bueno
-                            <input type="radio" name="bano" value="3"> Regular
-                            <input type="radio" name="bano" value="4"> Insuficiente
+                            <input type="radio" name="bath" value="1" required> Excelente
+                            <input type="radio" name="bath" value="2"> Bueno
+                            <input type="radio" name="bath" value="3"> Regular
+                            <input type="radio" name="bath" value="4"> Insuficiente
                         </div>
                         <button type="button" class="prev-btn">Anterior</button>
                         <button type="button" class="next-btn">Siguiente</button>
                     </div>
 
+                    <!-- Red Sport Bar -->
                     <div class="step">
                         <p><strong>Califica Red Sport Bar</strong></p>
                         <div class="rating">
-                            <input type="radio" name="red-sport-bar" value="1" required> Excelente
-                            <input type="radio" name="red-sport-bar" value="2"> Bueno
-                            <input type="radio" name="red-sport-bar" value="3"> Regular
-                            <input type="radio" name="red-sport-bar" value="4"> Insuficiente
+                            <input type="radio" name="redp" value="1" required> Excelente
+                            <input type="radio" name="redp" value="2"> Bueno
+                            <input type="radio" name="redp" value="3"> Regular
+                            <input type="radio" name="redp" value="4"> Insuficiente
                         </div>
                         <button type="button" class="prev-btn">Anterior</button>
                         <button type="button" class="next-btn">Siguiente</button>
                     </div>
 
+                    <!-- Manolo's -->
                     <div class="step">
                         <p><strong>Califica Manolo's</strong></p>
                         <div class="rating">
-                            <input type="radio" name="manolos" value="1" required> Excelente
-                            <input type="radio" name="manolos" value="2"> Bueno
-                            <input type="radio" name="manolos" value="3"> Regular
-                            <input type="radio" name="manolos" value="4"> Insuficiente
+                            <input type="radio" name="manolo" value="1" required> Excelente
+                            <input type="radio" name="manolo" value="2"> Bueno
+                            <input type="radio" name="manolo" value="3"> Regular
+                            <input type="radio" name="manolo" value="4"> Insuficiente
                         </div>
                         <button type="button" class="prev-btn">Anterior</button>
                         <button type="button" class="next-btn">Siguiente</button>
                     </div>
 
+                    <!-- Desayuno -->
                     <div class="step">
                         <p><strong>Califica el desayuno / Breakfast</strong></p>
                         <div class="rating">
-                            <input type="radio" name="desayuno" value="1" required> Excelente
-                            <input type="radio" name="desayuno" value="2"> Bueno
-                            <input type="radio" name="desayuno" value="3"> Regular
-                            <input type="radio" name="desayuno" value="4"> Insuficiente
+                            <input type="radio" name="desay" value="1" required> Excelente
+                            <input type="radio" name="desay" value="2"> Bueno
+                            <input type="radio" name="desay" value="3"> Regular
+                            <input type="radio" name="desay" value="4"> Insuficiente
                         </div>
                         <button type="button" class="prev-btn">Anterior</button>
                         <button type="button" class="next-btn">Siguiente</button>
                     </div>
 
+                    <!-- Room Service -->
                     <div class="step">
                         <p><strong>Califica el servicio a la habitación / Room Service</strong></p>
                         <div class="rating">
-                            <input type="radio" name="room-service" value="1" required> Excelente
-                            <input type="radio" name="room-service" value="2"> Bueno
-                            <input type="radio" name="room-service" value="3"> Regular
-                            <input type="radio" name="room-service" value="4"> Insuficiente
+                            <input type="radio" name="rmserv" value="1" required> Excelente
+                            <input type="radio" name="rmserv" value="2"> Bueno
+                            <input type="radio" name="rmserv" value="3"> Regular
+                            <input type="radio" name="rmserv" value="4"> Insuficiente
                         </div>
                         <button type="button" class="prev-btn">Anterior</button>
                         <button type="button" class="next-btn">Siguiente</button>
                     </div>
 
+                    <!-- Piscina -->
                     <div class="step">
                         <p><strong>Califica la piscina / Pool</strong></p>
                         <div class="rating">
-                            <input type="radio" name="piscina" value="1" required> Excelente
-                            <input type="radio" name="piscina" value="2"> Bueno
-                            <input type="radio" name="piscina" value="3"> Regular
-                            <input type="radio" name="piscina" value="4"> Insuficiente
+                            <input type="radio" name="pool" value="1" required> Excelente
+                            <input type="radio" name="pool" value="2"> Bueno
+                            <input type="radio" name="pool" value="3"> Regular
+                            <input type="radio" name="pool" value="4"> Insuficiente
                         </div>
                         <button type="button" class="prev-btn">Anterior</button>
                         <button type="button" class="next-btn">Siguiente</button>
                     </div>
 
+                    <!-- Check-out -->
                     <div class="step">
                         <p><strong>Califica la salida / Check-out</strong></p>
                         <div class="rating">
-                            <input type="radio" name="salida" value="1" required> Excelente
-                            <input type="radio" name="salida" value="2"> Bueno
-                            <input type="radio" name="salida" value="3"> Regular
-                            <input type="radio" name="salida" value="4"> Insuficiente
+                            <input type="radio" name="check_out" value="1" required> Excelente
+                            <input type="radio" name="check_out" value="2"> Bueno
+                            <input type="radio" name="check_out" value="3"> Regular
+                            <input type="radio" name="check_out" value="4"> Insuficiente
                         </div>
                         <button type="button" class="prev-btn">Anterior</button>
                         <button type="button" class="next-btn">Siguiente</button>
                     </div>
+
+                    <!-- Calificación General -->
                     <div class="step">
                         <p><strong>Calificación general del hotel</strong></p>
                         <div class="rating">
-                            <input type="radio" name="calificacion-general" value="1" required> Excelente
-                            <input type="radio" name="calificacion-general" value="2"> Bueno
-                            <input type="radio" name="calificacion-general" value="3"> Regular
-                            <input type="radio" name="calificacion-general" value="4"> Insuficiente
+                            <input type="radio" name="gneral" value="1" required> Excelente
+                            <input type="radio" name="gneral" value="2"> Bueno
+                            <input type="radio" name="gneral" value="3"> Regular
+                            <input type="radio" name="gneral" value="4"> Insuficiente
                         </div>
                         <button type="button" class="prev-btn">Anterior</button>
                         <button type="submit">Enviar</button>
@@ -157,7 +166,6 @@
             </div>
         </div>
     </div>
-
     <script src="/public/script.js"></script>
 </body>
 </html>
