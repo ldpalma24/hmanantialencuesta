@@ -66,17 +66,17 @@ document.addEventListener("DOMContentLoaded", function () {
     // Capturar los datos del formulario
     const surveyData = {
       nombre: document.querySelector('[name="nombre"]').value,
-      nrohab: document.querySelector('[name="habitacion"]').value,
-      check_in: document.querySelector('[name="llegada"]:checked')?.value,
-      hab: document.querySelector('[name="habitacion-cal"]:checked')?.value,
-      bath: document.querySelector('[name="bano"]:checked')?.value,
-      redp: document.querySelector('[name="red-sport-bar"]:checked')?.value,
-      manolo: document.querySelector('[name="manolos"]:checked')?.value,
-      desay: document.querySelector('[name="desayuno"]:checked')?.value,
-      rmserv: document.querySelector('[name="room-service"]:checked')?.value,
-      pool: document.querySelector('[name="piscina"]:checked')?.value,
-      check_out: document.querySelector('[name="salida"]:checked')?.value,
-      gneral: document.querySelector('[name="calificacion-general"]:checked')?.value,
+      nrohab: document.querySelector('[name="nrohab"]').value,
+      check_in: document.querySelector('[name="check_in"]:checked')?.value,
+      hab: document.querySelector('[name="hab"]:checked')?.value,
+      bath: document.querySelector('[name="bath"]:checked')?.value,
+      redp: document.querySelector('[name="redp"]:checked')?.value,
+      manolo: document.querySelector('[name="manolo"]:checked')?.value,
+      desay: document.querySelector('[name="desay"]:checked')?.value,
+      rmserv: document.querySelector('[name="rmserv"]:checked')?.value,
+      pool: document.querySelector('[name="pool"]:checked')?.value,
+      check_out: document.querySelector('[name="check_out"]:checked')?.value,
+      gneral: document.querySelector('[name="gneral"]:checked')?.value,
     };
 
     // Validar que todos los campos estén completos
