@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Manejar el envío del formulario
-  const apiUrl = "https://prueba-backend-roan.vercel.app/api/survey";
+  const apiUrl = "https://hmanantialencuesta.vercel.app/api/survey";
 
   document.getElementById("surveyForm").addEventListener("submit", function (event) {
     event.preventDefault();
