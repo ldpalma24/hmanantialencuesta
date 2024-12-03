@@ -1,3 +1,4 @@
+const apiUrl = "https://hmanantialencuesta.vercel.app/api/survey";
 
 document.addEventListener("DOMContentLoaded", function () {
   let currentStep = 0;
@@ -59,15 +60,13 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Manejar el envío del formulario
-  const apiUrl = "https://nodejs-production-bd02.up.railway.app/api/survey";
-
-  document.getElementById("surveyForm").addEventListener("submit", function (event) {
+  document.getElementById("surveyForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
     // Capturar los datos del formulario
     const surveyData = {
-      nombre: document.querySelector('[name="nombre"]').value,
-      nrohab: document.querySelector('[name="nrohab"]').value,
+      nombre: document.querySelector('[name="nombre"]').value.trim(),
+      nrohab: document.querySelector('[name="nrohab"]').value.trim(),
       check_in: document.querySelector('[name="check_in"]:checked')?.value,
       hab: document.querySelector('[name="hab"]:checked')?.value,
       bath: document.querySelector('[name="bath"]:checked')?.value,
@@ -86,27 +85,31 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Enviar los datos al backend
-    fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(surveyData), // Enviar el objeto en formato JSON
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error("Error en la respuesta del servidor");
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log("Success:", data);
-        alert("Encuesta guardada exitosamente: " + data.message);
-      })
-      .catch(error => {
-        console.error("Error:", error);
-        alert("Ocurrió un error al guardar la encuesta.");
+    try {
+      // Enviar los datos al backend
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(surveyData), // Enviar el objeto en formato JSON
       });
+
+      if (!response.ok) {
+        throw new Error("Error en la respuesta del servidor");
+      }
+
+      const data = await response.json();
+      console.log("Success:", data);
+      alert("Encuesta guardada exitosamente: " + data.message);
+
+      // Opcional: Reiniciar el formulario
+      document.getElementById("surveyForm").reset();
+      currentStep = 0;
+      showStep(currentStep);
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Ocurrió un error al guardar la encuesta.");
+    }
   });
 });
