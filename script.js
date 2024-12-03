@@ -1,33 +1,26 @@
+
 document.addEventListener("DOMContentLoaded", function () {
   let currentStep = 0;
   const steps = document.querySelectorAll(".step");
   const nextBtns = document.querySelectorAll(".next-btn");
   const prevBtns = document.querySelectorAll(".prev-btn");
 
-  // Mostrar el primer paso al cargar la página
+  // Muestra la primera sección al iniciar
   showStep(currentStep);
 
-  // Función para mostrar el paso actual y deshabilitar los campos no visibles
+  // Función para mostrar el paso actual
   function showStep(stepIndex) {
     steps.forEach((step, index) => {
-      step.classList.toggle("active", index === stepIndex);
-      step.querySelectorAll("input").forEach(input => input.disabled = index !== stepIndex);
+      step.classList.remove("active");
+      if (index === stepIndex) {
+        step.classList.add("active");
+      }
     });
     window.scrollTo(0, 0); // Desplazarse hacia arriba al cambiar de paso
   }
 
-  // Validar campos antes de avanzar
-  function validateCurrentStep() {
-    const currentInputs = steps[currentStep].querySelectorAll("input");
-    return Array.from(currentInputs).every(input => input.checkValidity());
-  }
-
-  // Avanzar al siguiente paso
+  // Función para avanzar al siguiente paso
   function nextStep() {
-    if (!validateCurrentStep()) {
-      alert("Por favor, completa todos los campos requeridos antes de continuar.");
-      return;
-    }
     if (currentStep < steps.length - 1) {
       const current = steps[currentStep];
       const next = steps[currentStep + 1];
@@ -47,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Regresar al paso anterior
+  // Función para regresar al paso anterior
   function prevStep() {
     if (currentStep > 0) {
       currentStep--;
@@ -55,9 +48,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Agregar eventos a los botones
-  nextBtns.forEach(btn => btn.addEventListener("click", nextStep));
-  prevBtns.forEach(btn => btn.addEventListener("click", prevStep));
+  // Agregar eventos a los botones "Siguiente"
+  nextBtns.forEach(btn => {
+    btn.addEventListener("click", nextStep);
+  });
+
+  // Agregar eventos a los botones "Anterior"
+  prevBtns.forEach(btn => {
+    btn.addEventListener("click", prevStep);
+  });
 
   // Manejar el envío del formulario
   const apiUrl = "https://nodejs-production-bd02.up.railway.app/api/survey";
@@ -67,22 +66,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Capturar los datos del formulario
     const surveyData = {
-      nombre: document.querySelector('[name="nombre"]').value || "",
-      nrohab: document.querySelector('[name="nrohab"]').value || "",
-      check_in: document.querySelector('[name="check_in"]:checked')?.value || "",
-      hab: document.querySelector('[name="hab"]:checked')?.value || "",
-      bath: document.querySelector('[name="bath"]:checked')?.value || "",
-      redp: document.querySelector('[name="redp"]:checked')?.value || "",
-      manolo: document.querySelector('[name="manolo"]:checked')?.value || "",
-      desay: document.querySelector('[name="desay"]:checked')?.value || "",
-      rmserv: document.querySelector('[name="rmserv"]:checked')?.value || "",
-      pool: document.querySelector('[name="pool"]:checked')?.value || "",
-      check_out: document.querySelector('[name="check_out"]:checked')?.value || "",
-      gneral: document.querySelector('[name="gneral"]:checked')?.value || "",
+      nombre: document.querySelector('[name="nombre"]').value,
+      nrohab: document.querySelector('[name="nrohab"]').value,
+      check_in: document.querySelector('[name="check_in"]:checked')?.value,
+      hab: document.querySelector('[name="hab"]:checked')?.value,
+      bath: document.querySelector('[name="bath"]:checked')?.value,
+      redp: document.querySelector('[name="redp"]:checked')?.value,
+      manolo: document.querySelector('[name="manolo"]:checked')?.value,
+      desay: document.querySelector('[name="desay"]:checked')?.value,
+      rmserv: document.querySelector('[name="rmserv"]:checked')?.value,
+      pool: document.querySelector('[name="pool"]:checked')?.value,
+      check_out: document.querySelector('[name="check_out"]:checked')?.value,
+      gneral: document.querySelector('[name="gneral"]:checked')?.value,
     };
 
     // Validar que todos los campos estén completos
-    if (Object.values(surveyData).some(value => value === "")) {
+    if (Object.values(surveyData).some(value => value === undefined || value === "")) {
       alert("Por favor, responde todas las preguntas antes de enviar.");
       return;
     }
@@ -90,8 +89,10 @@ document.addEventListener("DOMContentLoaded", function () {
     // Enviar los datos al backend
     fetch(apiUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(surveyData),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(surveyData), // Enviar el objeto en formato JSON
     })
       .then(response => {
         if (!response.ok) {
@@ -100,8 +101,8 @@ document.addEventListener("DOMContentLoaded", function () {
         return response.json();
       })
       .then(data => {
+        console.log("Success:", data);
         alert("Encuesta guardada exitosamente: " + data.message);
-        window.location.href = "/gracias.html"; // Redirigir a una página de agradecimiento
       })
       .catch(error => {
         console.error("Error:", error);
