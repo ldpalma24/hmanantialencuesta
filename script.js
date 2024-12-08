@@ -62,36 +62,28 @@ document.addEventListener("DOMContentLoaded", function () {
   // Manejar el envío del formulario
   document.getElementById("surveyForm").addEventListener("submit", async function (event) {
     event.preventDefault();
-
-    // Capturar los datos del formulario
-    const mapping = {
-      "Excelente": 5,
-      "Buena": 4,
-      "Aceptable": 3,
-      "Regular": 2,
-      "Mala": 1
-    };
     
     const surveyData = {
       nombre: document.querySelector('[name="nombre"]').value,
       nrohab: parseInt(document.querySelector('[name="nrohab"]').value, 10),
-      check_in: mapping[document.querySelector('[name="check_in"]:checked')?.value],
-      hab: mapping[document.querySelector('[name="hab"]:checked')?.value],
-      bath: mapping[document.querySelector('[name="bath"]:checked')?.value],
-      redp: mapping[document.querySelector('[name="redp"]:checked')?.value],
-      manolo: mapping[document.querySelector('[name="manolo"]:checked')?.value],
-      desay: mapping[document.querySelector('[name="desay"]:checked')?.value],
-      rmserv: mapping[document.querySelector('[name="rmserv"]:checked')?.value],
-      pool: mapping[document.querySelector('[name="pool"]:checked')?.value],
-      check_out: mapping[document.querySelector('[name="check_out"]:checked')?.value],
-      gneral: mapping[document.querySelector('[name="gneral"]:checked')?.value],
+      check_in: document.querySelector('[name="check_in"]:checked')?.value,
+      hab: document.querySelector('[name="hab"]:checked')?.value,
+      bath: document.querySelector('[name="bath"]:checked')?.value,
+      redp: document.querySelector('[name="redp"]:checked')?.value,
+      manolo: document.querySelector('[name="manolo"]:checked')?.value,
+      desay: document.querySelector('[name="desay"]:checked')?.value,
+      rmserv: document.querySelector('[name="rmserv"]:checked')?.value,
+      pool: document.querySelector('[name="pool"]:checked')?.value,
+      check_out: document.querySelector('[name="check_out"]:checked')?.value,
+      gneral: document.querySelector('[name="gneral"]:checked')?.value,
     };
-
+    
     // Validar que todos los campos estén completos
     if (Object.values(surveyData).some(value => value === undefined || value === "")) {
       alert("Por favor, responde todas las preguntas antes de enviar.");
       return;
     }
+
 
     try {
       // Enviar los datos al backend
