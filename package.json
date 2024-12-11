@@ -7,6 +7,7 @@
     "build": "mkdir -p build && cp -r public/* build/"
   },
   "dependencies": {
+    "@octokit/rest": "^21.0.2",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "exceljs": "^4.4.0",

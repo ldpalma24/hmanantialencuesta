@@ -1,7 +1,9 @@
 const express = require('express');
 const { Pool } = require('pg');
 const bodyParser = require('body-parser');
-const ExcelJS = require('exceljs'); // Importa la biblioteca exceljs
+const ExcelJS = require('exceljs');
+const { Octokit } = require('@octokit/rest');
+const fs = require('fs').promises; 
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -12,15 +14,19 @@ const dbPool = new Pool({
 
 app.use(bodyParser.json());
 
+const octokit = new Octokit({
+  auth: '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', 
+});
+
 // Ruta raíz para verificar el funcionamiento del servidor
 app.get('/', (req, res) => {
   res.send('Servidor funcionando. Usa /api/survey para enviar datos.');
 });
 
-// Función para exportar datos a Excel
+// Función para exportar datos a Excel y subir a GitHub
 const exportToExcel = async () => {
   try {
-    const query = 'SELECT * FROM encuestas'; // Consulta para obtener todos los datos de la tabla encuestas
+    const query = 'SELECT * FROM encuestas';
     const result = await dbPool.query(query);
 
     const data = result.rows;
@@ -44,15 +50,32 @@ const exportToExcel = async () => {
       { header: 'Gneral', key: 'gneral', width: 10 }
     ];
 
-    // Añade las filas a la hoja de trabajo
     worksheet.addRows(data);
 
-    // Guarda el archivo Excel
-    await workbook.xlsx.writeFile('encuestas.xlsx');
-
+    const filePath = 'encuestas.xlsx';
+    await workbook.xlsx.writeFile(filePath);
     console.log('Datos exportados a encuestas.xlsx');
+
+    const content = await fs.readFile(filePath, 'base64');
+
+    const { data: { sha } } = await octokit.repos.getContent({
+      owner: 'ldpalma24', // Reemplaza con tu usuario de GitHub
+      repo: 'hmanantialencuesta', // Reemplaza con el nombre de tu repositorio
+      path: filePath
+    }).catch(() => ({ data: { sha: null } }));
+
+    await octokit.repos.createOrUpdateFileContents({
+      owner: 'YOUR_GITHUB_USERNAME',
+      repo: 'YOUR_REPOSITORY_NAME',
+      path: filePath,
+      message: 'Actualizando archivo encuestas.xlsx',
+      content: content,
+      sha: sha || undefined,
+    });
+
+    console.log('Archivo subido a GitHub');
   } catch (error) {
-    console.error('Error al exportar los datos a Excel:', error.message, error.stack);
+    console.error('Error al exportar los datos a Excel o subir a GitHub:', error.message, error.stack);
   }
 };
 
@@ -97,7 +120,8 @@ app.post('/api/survey', async (req, res) => {
       result: result.rows[0]
     });
 
-    await exportToExcel(); // Exporta los datos a Excel cada vez que se inserten nuevos datos
+    console.log('Llamando a exportToExcel');
+    await exportToExcel(); // Exporta los datos a Excel y sube a GitHub cada vez que se inserten nuevos datos
 
   } catch (error) {
     console.error('Error al guardar la encuesta:', error.message, error.stack);
