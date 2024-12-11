@@ -11,12 +11,10 @@ const pool = new Pool({
 
 app.use(bodyParser.json());
 
-// Ruta raíz para verificar el funcionamiento del servidor
 app.get('/', (req, res) => {
   res.send('Servidor funcionando. Usa /api/survey para enviar datos.');
 });
 
-// Ruta para manejar los envíos de encuestas
 app.post('/api/survey', async (req, res) => {
   const {
     nombre,
@@ -33,37 +31,55 @@ app.post('/api/survey', async (req, res) => {
     gneral
   } = req.body;
 
+  console.log('Datos recibidos:', req.body);
+
+  const nrohabInt = parseInt(nrohab, 10);
+  const checkInInt = parseInt(check_in, 10);
+  const habInt = parseInt(hab, 10);
+  const bathInt = parseInt(bath, 10);
+  const redpInt = parseInt(redp, 10);
+  const manoloInt = parseInt(manolo, 10);
+  const desayInt = parseInt(desay, 10);
+  const rmservInt = parseInt(rmserv, 10);
+  const poolInt = parseInt(pool, 10);
+  const checkOutInt = parseInt(check_out, 10);
+  const gneralInt = parseInt(gneral, 10);
+
+  if (
+    [nrohabInt, checkInInt, habInt, bathInt, redpInt, manoloInt, desayInt, rmservInt, poolInt, checkOutInt, gneralInt]
+    .some(val => isNaN(val))
+  ) {
+    return res.status(400).json({ error: 'Todos los campos numéricos deben ser enteros.' });
+  }
+
   try {
-    // Consulta SQL para insertar los datos en la tabla encuestas
     const query = `
       INSERT INTO encuestas (
         nombre, nrohab, check_in, hab, bath, redp, manolo, desay,
         rmserv, pool, check_out, gneral
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-      RETURNING id, nombre, nrohab, check_in, hab, bath, redp, manolo,
-        desay, rmserv, pool, check_out, gneral;
+      RETURNING *;
     `;
 
     const values = [
-      nombre, nrohab, check_in, hab, bath, redp, manolo, desay,
-      rmserv, pool, check_out, gneral
+      nombre, nrohabInt, checkInInt, habInt, bathInt, redpInt, manoloInt, desayInt,
+      rmservInt, poolInt, checkOutInt, gneralInt
     ];
 
     const result = await pool.query(query, values);
 
-    console.log(result.rows[0]); // Verifica que el resultado esté correcto
+    console.log('Resultado de la inserción:', result.rows[0]);
     res.status(201).json({
       message: 'Encuesta guardada exitosamente.',
       result: result.rows[0]
     });
   } catch (error) {
-    console.error('Error al guardar la encuesta:', error);
-    res.status(500).json({ error: 'Error al guardar la encuesta.' });
+    console.error('Error al guardar la encuesta:', error.message, error.stack);
+    res.status(500).json({ error: error.message });
   }
 });
 
-// Inicia el servidor en el puerto configurado
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
 });
