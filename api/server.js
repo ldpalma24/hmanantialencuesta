@@ -65,8 +65,10 @@ app.post('/api/survey', async (req, res) => {
         mediaType: { format: 'raw' },
       });
       await workbook.xlsx.load(Buffer.from(fileData));
+      worksheet = workbook.getWorksheet('Encuestas');
     } catch (error) {
       // Si no existe el archivo, crearlo
+      console.log('Archivo no encontrado, creando uno nuevo...');
       worksheet = workbook.addWorksheet('Encuestas');
       worksheet.columns = [
         { header: 'Nombre', key: 'nombre', width: 20 },
@@ -84,7 +86,6 @@ app.post('/api/survey', async (req, res) => {
       ];
     }
 
-    worksheet = workbook.getWorksheet('Encuestas');
     worksheet.addRow({
       nombre,
       nrohab,
@@ -103,20 +104,27 @@ app.post('/api/survey', async (req, res) => {
     // Guardar el archivo en un buffer
     const buffer = await workbook.xlsx.writeBuffer();
 
-    // Subir el archivo actualizado a GitHub
-    const { data: existingFile } = await octokit.repos.getContent({
-      owner: REPO_OWNER,
-      repo: REPO_NAME,
-      path: FILE_PATH,
-    });
+    // Obtener el sha del archivo existente para actualizarlo
+    let sha = '';
+    try {
+      const { data: existingFile } = await octokit.repos.getContent({
+        owner: REPO_OWNER,
+        repo: REPO_NAME,
+        path: FILE_PATH,
+      });
+      sha = existingFile.sha;
+    } catch (error) {
+      console.log('Archivo no encontrado, creando uno nuevo...');
+    }
 
+    // Subir el archivo actualizado a GitHub
     await octokit.repos.createOrUpdateFileContents({
       owner: REPO_OWNER,
       repo: REPO_NAME,
       path: FILE_PATH,
       message: 'Actualizar encuestas',
       content: buffer.toString('base64'),
-      sha: existingFile.sha,
+      sha: sha || '',  
     });
 
     res.status(201).json({ message: 'Encuesta guardada y archivo actualizado.' });
