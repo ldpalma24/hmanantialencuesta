@@ -14,8 +14,8 @@ const dbPool = new Pool({
 
 // Configuración del token de GitHub
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-const REPO_OWNER = 'tu_usuario'; // Cambia esto por tu usuario de GitHub
-const REPO_NAME = 'tu_repositorio'; // Cambia esto por el nombre de tu repositorio
+const REPO_OWNER = 'ldpalma'; // Cambia esto por tu usuario de GitHub
+const REPO_NAME = 'hmanantialencuesta'; // Cambia esto por el nombre de tu repositorio
 const FILE_PATH = 'data/encuestas.xlsx'; // Ruta del archivo en el repositorio
 
 const octokit = new Octokit({ auth: GITHUB_TOKEN });
