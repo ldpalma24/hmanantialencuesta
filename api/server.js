@@ -1,4 +1,6 @@
 require('dotenv').config();
+console.log('GITHUB_TOKEN:', process.env.GITHUB_TOKEN); // Verifica que el token se está leyendo correctamente
+
 const express = require('express');
 const { Pool } = require('pg');
 const bodyParser = require('body-parser');
@@ -59,22 +61,27 @@ const exportToExcel = async () => {
 
     const content = await fs.readFile(filePath, 'base64');
 
-    const { data: { sha } } = await octokit.repos.getContent({
-      owner: 'ldpalma24',
-      repo: 'hmanantialencuesta',
-      path: filePath
-    }).catch(() => ({ data: { sha: null } }));
+    try {
+      const { data: { sha } } = await octokit.repos.getContent({
+        owner: 'ldpalma24',
+        repo: 'hmanantialencuesta',
+        path: filePath
+      }).catch(() => ({ data: { sha: null } }));
 
-    await octokit.repos.createOrUpdateFileContents({
-      owner: 'ldpalma24',
-      repo: 'hmanantialencuesta',
-      path: filePath,
-      message: 'Actualizando archivo encuestas.xlsx',
-      content: content,
-      sha: sha || undefined,
-    });
+      await octokit.repos.createOrUpdateFileContents({
+        owner: 'ldpalma24',
+        repo: 'hmanantialencuesta',
+        path: filePath,
+        message: 'Actualizando archivo encuestas.xlsx',
+        content: content,
+        sha: sha || undefined,
+      });
 
-    console.log('Archivo subido a GitHub');
+      console.log('Archivo subido a GitHub');
+    } catch (error) {
+      console.error('Error al interactuar con GitHub:', error.message);
+      throw error; // Lanza el error para que se maneje adecuadamente
+    }
   } catch (error) {
     console.error('Error al exportar los datos a Excel o subir a GitHub:', error.message, error.stack);
   }
