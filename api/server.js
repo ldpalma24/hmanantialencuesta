@@ -1,9 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
 const bodyParser = require('body-parser');
 const ExcelJS = require('exceljs');
 const { Octokit } = require('@octokit/rest');
-const fs = require('fs').promises; 
+const fs = require('fs').promises;
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -15,7 +16,7 @@ const dbPool = new Pool({
 app.use(bodyParser.json());
 
 const octokit = new Octokit({
-  auth: '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', 
+  auth: process.env.GITHUB_TOKEN, // Usa la variable de entorno
 });
 
 // Ruta raíz para verificar el funcionamiento del servidor
@@ -59,14 +60,14 @@ const exportToExcel = async () => {
     const content = await fs.readFile(filePath, 'base64');
 
     const { data: { sha } } = await octokit.repos.getContent({
-      owner: 'ldpalma24', // Reemplaza con tu usuario de GitHub
-      repo: 'hmanantialencuesta', // Reemplaza con el nombre de tu repositorio
+      owner: 'ldpalma24',
+      repo: 'hmanantialencuesta',
       path: filePath
     }).catch(() => ({ data: { sha: null } }));
 
     await octokit.repos.createOrUpdateFileContents({
-      owner: 'YOUR_GITHUB_USERNAME',
-      repo: 'YOUR_REPOSITORY_NAME',
+      owner: 'ldpalma24',
+      repo: 'hmanantialencuesta',
       path: filePath,
       message: 'Actualizando archivo encuestas.xlsx',
       content: content,
