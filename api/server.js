@@ -3,7 +3,6 @@ const { Pool } = require('pg');
 const bodyParser = require('body-parser');
 const ExcelJS = require('exceljs');
 const { Octokit } = require('@octokit/rest');
-const fs = require('fs').promises;
 require('dotenv').config();
 
 const app = express();
@@ -18,12 +17,7 @@ app.use(bodyParser.json());
 
 // Configuración de Octokit con el token de GitHub
 const octokit = new Octokit({
-  auth: process.env.GITHUB_TOKEN, // Asegúrate de tener esta variable de entorno configurada
-});
-
-// Ruta raíz para verificar el funcionamiento del servidor
-app.get('/', (req, res) => {
-  res.send('Servidor funcionando. Usa /api/survey para enviar datos.');
+  auth: process.env.GITHUB_TOKEN, 
 });
 
 // Función para exportar datos a Excel y subir a GitHub
@@ -121,8 +115,7 @@ app.post('/api/survey', async (req, res) => {
         rmserv, pool, check_out, gneral
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-      RETURNING id, nombre, nrohab, check_in, hab, bath, redp, manolo,
-        desay, rmserv, pool, check_out, gneral;
+      RETURNING *;
     `;
 
     const values = [
