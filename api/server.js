@@ -1,40 +1,24 @@
+require('dotenv').config();
 const express = require('express');
-const { Pool } = require('pg');
 const bodyParser = require('body-parser');
 const ExcelJS = require('exceljs');
 const { Octokit } = require('@octokit/rest');
-require('dotenv').config();
+const dbPool = require('./dbPool');
 
 const app = express();
-const port = process.env.PORT || 3000;
-
-// Configuración de la conexión a PostgreSQL
-const dbPool = new Pool({
-  connectionString: 'postgresql://postgres:KoAhRTsHVPEnTVAzryXhCFdpHRZSxOSq@autorack.proxy.rlwy.net:49504/railway',
-});
-
 app.use(bodyParser.json());
 
-// Configuración de Octokit con el token de GitHub
-const octokit = new Octokit({
-  auth: process.env.GITHUB_TOKEN, 
-});
+const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
-// Función para exportar datos a Excel y subir a GitHub
-const exportToExcel = async () => {
+async function exportDataToExcel() {
   try {
-    console.log('Exportando datos a Excel...');
-
-    // Obtener los datos de la base de datos
-    const query = 'SELECT * FROM encuestas';
-    const result = await dbPool.query(query);
+    // Obtener todos los datos de la tabla encuestas
+    const result = await dbPool.query('SELECT * FROM encuestas');
     const data = result.rows;
 
-    // Crear un nuevo libro de Excel
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Encuestas');
 
-    // Definir las columnas del archivo Excel
     worksheet.columns = [
       { header: 'ID', key: 'id', width: 10 },
       { header: 'Nombre', key: 'nombre', width: 30 },
@@ -51,16 +35,14 @@ const exportToExcel = async () => {
       { header: 'Gneral', key: 'gneral', width: 10 },
     ];
 
-    // Agregar los datos al archivo Excel
     worksheet.addRows(data);
 
-    // Guardar el archivo en un buffer
     const buffer = await workbook.xlsx.writeBuffer();
     const content = buffer.toString('base64');
 
     console.log('Archivo Excel creado en memoria.');
 
-    // Intentar obtener el SHA del archivo si ya existe en el repositorio
+    // Obtener el SHA del archivo si ya existe en el repositorio
     let sha;
     try {
       const { data } = await octokit.repos.getContent({
@@ -69,8 +51,10 @@ const exportToExcel = async () => {
         path: 'encuestas.xlsx',
       });
       sha = data.sha;
-    } catch (err) {
-      console.log('El archivo no existe en el repositorio. Se creará uno nuevo.');
+    } catch (error) {
+      if (error.status !== 404) {
+        throw error;
+      }
     }
 
     // Subir o actualizar el archivo en GitHub
@@ -80,18 +64,17 @@ const exportToExcel = async () => {
       path: 'encuestas.xlsx',
       message: 'Actualizando archivo encuestas.xlsx',
       content: content,
-      sha: sha, // Si el archivo no existe, `sha` será undefined
+      sha: sha || undefined,
     });
 
-    console.log('Archivo subido exitosamente a GitHub.');
+    console.log('Archivo subido a GitHub');
   } catch (error) {
-    console.error('Error al exportar datos a Excel o subir a GitHub:', error.message, error.stack);
-    throw error;
+    console.error('Error al exportar datos a Excel:', error);
+    throw new Error('Error al exportar datos a Excel');
   }
-};
+}
 
-// Ruta para manejar los envíos de encuestas
-app.post('/api/survey', async (req, res) => {
+app.post('/submit-encuesta', async (req, res) => {
   const {
     nombre,
     nrohab,
@@ -108,7 +91,6 @@ app.post('/api/survey', async (req, res) => {
   } = req.body;
 
   try {
-    // Consulta SQL para insertar los datos en la tabla encuestas
     const query = `
       INSERT INTO encuestas (
         nombre, nrohab, check_in, hab, bath, redp, manolo, desay,
@@ -118,28 +100,21 @@ app.post('/api/survey', async (req, res) => {
       RETURNING *;
     `;
 
-    const values = [
-      nombre, nrohab, check_in, hab, bath, redp, manolo, desay,
-      rmserv, pool, check_out, gneral,
-    ];
+    const values = [nombre, nrohab, check_in, hab, bath, redp, manolo, desay, rmserv, pool, check_out, gneral];
 
     const result = await dbPool.query(query, values);
 
-    console.log(result.rows[0]);
-    res.status(201).json({
-      message: 'Encuesta guardada exitosamente.',
-      result: result.rows[0],
-    });
+    await exportDataToExcel();
 
-    // Exportar datos a Excel y subir a GitHub
-    await exportToExcel();
+    res.status(200).json(result.rows[0]);
   } catch (error) {
-    console.error('Error al guardar la encuesta:', error.message, error.stack);
-    res.status(500).json({ error: error.message });
+    console.error('Error al enviar la encuesta:', error);
+    res.status(500).send('A server error has occurred');
   }
 });
 
-// Inicia el servidor en el puerto configurado
+const port = process.env.PORT || 3000;
+
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
 });
