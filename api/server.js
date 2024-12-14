@@ -3,14 +3,16 @@ const { Pool } = require('pg');
 const bodyParser = require('body-parser');
 const { put } = require('@vercel/blob');
 const ExcelJS = require('exceljs');
-require('dotenv').config(); 
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Token de Vercel Blob desde las variables de entorno
+const BLOB_READ_WRITE_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
 
+// Configuración de PostgreSQL
 const dbPool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://postgres:KoAhRTsHVPEnTVAzryXhCFdpHRZSxOSq@autorack.proxy.rlwy.net:49504/railway',
+  connectionString: 'postgresql://postgres:KoAhRTsHVPEnTVAzryXhCFdpHRZSxOSq@autorack.proxy.rlwy.net:49504/railway',
 });
 
 app.use(bodyParser.json());
@@ -19,50 +21,6 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => {
   res.send('Servidor funcionando. Usa /api/survey para enviar datos.');
 });
-
-// Función para exportar datos a Excel y subir a Vercel Blob
-async function exportToVercelBlob(data) {
-  try {
-    // Crear el archivo Excel en memoria
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Encuestas');
-
-    // Definir encabezados
-    worksheet.columns = [
-      { header: 'ID', key: 'id', width: 10 },
-      { header: 'Nombre', key: 'nombre', width: 30 },
-      { header: 'Nro Hab', key: 'nrohab', width: 10 },
-      { header: 'Check In', key: 'check_in', width: 20 },
-      { header: 'Hab', key: 'hab', width: 10 },
-      { header: 'Bath', key: 'bath', width: 10 },
-      { header: 'RedP', key: 'redp', width: 10 },
-      { header: 'Manolo', key: 'manolo', width: 10 },
-      { header: 'Desay', key: 'desay', width: 10 },
-      { header: 'RMServ', key: 'rmserv', width: 10 },
-      { header: 'Pool', key: 'pool', width: 10 },
-      { header: 'Check Out', key: 'check_out', width: 20 },
-      { header: 'General', key: 'gneral', width: 10 },
-    ];
-
-    // Agregar fila de datos
-    worksheet.addRow(data);
-
-    // Guardar el archivo en memoria como buffer
-    const buffer = await workbook.xlsx.writeBuffer();
-
-    // Subir el archivo a Vercel Blob
-    const result = await put('encuestas.xlsx', buffer, {
-      access: 'public',
-      token: process.env.BLOB_READ_WRITE_TOKEN, // Token de entorno
-    });
-
-    console.log('Archivo subido a Vercel Blob:', result.url);
-    return result.url; // Devuelve la URL del archivo subido
-  } catch (error) {
-    console.error('Error al exportar o subir archivo a Vercel Blob:', error);
-    throw error;
-  }
-}
 
 // Ruta para manejar los envíos de encuestas
 app.post('/api/survey', async (req, res) => {
@@ -82,7 +40,7 @@ app.post('/api/survey', async (req, res) => {
   } = req.body;
 
   try {
-    // Consulta SQL para insertar los datos en la tabla encuestas
+    // Insertar datos en la base de datos
     const query = `
       INSERT INTO encuestas (
         nombre, nrohab, check_in, hab, bath, redp, manolo, desay,
@@ -99,21 +57,49 @@ app.post('/api/survey', async (req, res) => {
 
     const result = await dbPool.query(query, values);
 
-    // Exportar a Excel y subir a Vercel Blob
-    const fileUrl = await exportToVercelBlob(result.rows[0]);
+    // Exportar a Excel
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Encuestas');
+
+    worksheet.columns = [
+      { header: 'Nombre', key: 'nombre' },
+      { header: 'Nro Hab', key: 'nrohab' },
+      { header: 'Check In', key: 'check_in' },
+      { header: 'Hab', key: 'hab' },
+      { header: 'Bath', key: 'bath' },
+      { header: 'RedP', key: 'redp' },
+      { header: 'Manolo', key: 'manolo' },
+      { header: 'Desay', key: 'desay' },
+      { header: 'RMServ', key: 'rmserv' },
+      { header: 'Pool', key: 'pool' },
+      { header: 'Check Out', key: 'check_out' },
+      { header: 'General', key: 'gneral' }
+    ];
+
+    worksheet.addRow(result.rows[0]);
+
+    const buffer = await workbook.xlsx.writeBuffer();
+
+    // Subir el archivo a Vercel Blob
+    const { url } = await put('uploads/encuestas.xlsx', buffer, {
+      access: 'public',
+      token: BLOB_READ_WRITE_TOKEN
+    });
+
+    console.log('Archivo subido exitosamente:', url);
 
     res.status(201).json({
-      message: 'Encuesta guardada y archivo subido exitosamente.',
-      fileUrl: fileUrl, // Devolver la URL del archivo subido
-      result: result.rows[0],
+      message: 'Encuesta guardada exitosamente.',
+      data: result.rows[0],
+      fileUrl: url
     });
   } catch (error) {
-    console.error('Error al guardar la encuesta:', error.message);
+    console.error('Error al guardar la encuesta:', error);
     res.status(500).json({ error: 'Error al guardar la encuesta' });
   }
 });
 
-// Inicia el servidor en el puerto configurado
+// Inicia el servidor
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
 });
