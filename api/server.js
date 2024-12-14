@@ -80,8 +80,9 @@ app.post('/api/survey', async (req, res) => {
 
     const buffer = await workbook.xlsx.writeBuffer();
 
-    // Subir el archivo a Vercel Blob
-    const { url } = await put('uploads/encuestas.xlsx', buffer, {
+    // Subir el archivo a Vercel Blob con un nombre fijo para un enlace estático
+    const fileName = 'uploads/encuestas-latest.xlsx';
+    const { url } = await put(fileName, buffer, {
       access: 'public',
       token: BLOB_READ_WRITE_TOKEN
     });
