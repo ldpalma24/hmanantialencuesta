@@ -55,34 +55,41 @@ app.post('/api/survey', async (req, res) => {
       rmserv, pool, check_out, gneral
     ];
 
-    const result = await dbPool.query(query, values);
+    await dbPool.query(query, values);
 
-    // Exportar a Excel
+    // Obtener todos los datos actuales de la base de datos
+    const allDataQuery = 'SELECT * FROM encuestas';
+    const allDataResult = await dbPool.query(allDataQuery);
+
+    // Exportar todos los datos a Excel
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Encuestas');
 
     worksheet.columns = [
-      { header: 'Nombre', key: 'nombre' },
-      { header: 'Nro Hab', key: 'nrohab' },
-      { header: 'Check In', key: 'check_in' },
-      { header: 'Hab', key: 'hab' },
-      { header: 'Bath', key: 'bath' },
-      { header: 'RedP', key: 'redp' },
-      { header: 'Manolo', key: 'manolo' },
-      { header: 'Desay', key: 'desay' },
-      { header: 'RMServ', key: 'rmserv' },
-      { header: 'Pool', key: 'pool' },
-      { header: 'Check Out', key: 'check_out' },
-      { header: 'General', key: 'gneral' }
+      { header: 'ID', key: 'id', width: 10 },
+      { header: 'Nombre', key: 'nombre', width: 30 },
+      { header: 'Nro Hab', key: 'nrohab', width: 10 },
+      { header: 'Check In', key: 'check_in', width: 20 },
+      { header: 'Hab', key: 'hab', width: 10 },
+      { header: 'Bath', key: 'bath', width: 10 },
+      { header: 'RedP', key: 'redp', width: 10 },
+      { header: 'Manolo', key: 'manolo', width: 10 },
+      { header: 'Desay', key: 'desay', width: 10 },
+      { header: 'RMServ', key: 'rmserv', width: 10 },
+      { header: 'Pool', key: 'pool', width: 10 },
+      { header: 'Check Out', key: 'check_out', width: 20 },
+      { header: 'General', key: 'gneral', width: 10 }
     ];
 
-    worksheet.addRow(result.rows[0]);
+    // Agregar todas las filas al archivo Excel
+    allDataResult.rows.forEach((row) => {
+      worksheet.addRow(row);
+    });
 
     const buffer = await workbook.xlsx.writeBuffer();
 
-    // Subir el archivo a Vercel Blob con un nombre fijo para un enlace estático
-    const fileName = 'uploads/encuestas-latest.xlsx';
-    const { url } = await put(fileName, buffer, {
+    // Subir el archivo a Vercel Blob con nombre estático
+    const { url } = await put('uploads/encuestas-latest.xlsx', buffer, {
       access: 'public',
       token: BLOB_READ_WRITE_TOKEN
     });
@@ -91,7 +98,6 @@ app.post('/api/survey', async (req, res) => {
 
     res.status(201).json({
       message: 'Encuesta guardada exitosamente.',
-      data: result.rows[0],
       fileUrl: url
     });
   } catch (error) {
