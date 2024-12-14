@@ -10,6 +10,9 @@ const port = process.env.PORT || 3000;
 // Token de Vercel Blob desde las variables de entorno
 const BLOB_READ_WRITE_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
 
+// Variable para almacenar el enlace más reciente del archivo
+let latestFileUrl = null;
+
 // Configuración de PostgreSQL
 const dbPool = new Pool({
   connectionString: 'postgresql://postgres:KoAhRTsHVPEnTVAzryXhCFdpHRZSxOSq@autorack.proxy.rlwy.net:49504/railway',
@@ -81,7 +84,6 @@ app.post('/api/survey', async (req, res) => {
       { header: 'General', key: 'gneral', width: 10 }
     ];
 
-    // Agregar todas las filas al archivo Excel
     allDataResult.rows.forEach((row) => {
       worksheet.addRow(row);
     });
@@ -94,6 +96,9 @@ app.post('/api/survey', async (req, res) => {
       token: BLOB_READ_WRITE_TOKEN
     });
 
+    // Guardar el enlace más reciente
+    latestFileUrl = url;
+
     console.log('Archivo subido exitosamente:', url);
 
     res.status(201).json({
@@ -103,6 +108,15 @@ app.post('/api/survey', async (req, res) => {
   } catch (error) {
     console.error('Error al guardar la encuesta:', error);
     res.status(500).json({ error: 'Error al guardar la encuesta' });
+  }
+});
+
+// Ruta para redireccionar al enlace más reciente
+app.get('/api/latest-excel', (req, res) => {
+  if (latestFileUrl) {
+    return res.redirect(latestFileUrl);
+  } else {
+    res.status(404).json({ error: 'No hay un archivo disponible aún.' });
   }
 });
 
