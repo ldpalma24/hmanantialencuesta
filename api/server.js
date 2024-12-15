@@ -13,7 +13,7 @@
 
     // Configuración de PostgreSQL
     const dbPool = new Pool({
-      connectionString: process.env.DATABASE_URL,
+      connectionString: process.env.URL_DATABASE,
     });
 
     app.use(bodyParser.json());
