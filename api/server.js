@@ -70,13 +70,13 @@ app.post('/api/survey', async (req, res) => {
       { header: 'Nombre', key: 'nombre', width: 30 },
       { header: 'Nro Hab', key: 'nrohab', width: 10 },
       { header: 'Check In', key: 'check_in', width: 20 },
-      { header: 'Hab', key: 'hab', width: 10 },
+      { header: 'Habitacion', key: 'hab', width: 10 },
       { header: 'Bath', key: 'bath', width: 10 },
-      { header: 'RedP', key: 'redp', width: 10 },
-      { header: 'Manolo', key: 'manolo', width: 10 },
-      { header: 'Desay', key: 'desay', width: 10 },
-      { header: 'RMServ', key: 'rmserv', width: 10 },
-      { header: 'Pool', key: 'pool', width: 10 },
+      { header: 'RedSportBar', key: 'redp', width: 10 },
+      { header: 'Manolos', key: 'manolo', width: 10 },
+      { header: 'Desayuno', key: 'desay', width: 10 },
+      { header: 'Room Service', key: 'rmserv', width: 10 },
+      { header: 'Piscina', key: 'pool', width: 10 },
       { header: 'Check Out', key: 'check_out', width: 20 },
       { header: 'General', key: 'gneral', width: 10 }
     ];
@@ -93,7 +93,12 @@ app.post('/api/survey', async (req, res) => {
       token: BLOB_READ_WRITE_TOKEN
     });
 
-    // Guardar el enlace más reciente
+    // Guardar el enlace más reciente en la base de datos
+    await dbPool.query(`
+      INSERT INTO latest_file (url) VALUES ($1)
+      ON CONFLICT (id) DO UPDATE SET url = $1;
+    `, [url]);
+
     console.log('Archivo subido exitosamente:', url);
 
     res.status(201).json({
@@ -107,9 +112,19 @@ app.post('/api/survey', async (req, res) => {
 });
 
 // Ruta para redireccionar al enlace más reciente
-app.get('/api/latest-excel', (req, res) => {
-  const staticUrl = 'https://hmanantialencuesta-blob.vercel-storage.com/uploads/encuestas-latest.xlsx';
-  res.redirect(staticUrl);
+app.get('/api/latest-excel', async (req, res) => {
+  try {
+    const result = await dbPool.query('SELECT url FROM latest_file LIMIT 1');
+
+    if (result.rows.length > 0) {
+      return res.redirect(result.rows[0].url);
+    } else {
+      res.status(404).json({ error: 'No hay un archivo disponible aún.' });
+    }
+  } catch (error) {
+    console.error('Error al obtener el enlace más reciente:', error);
+    res.status(500).json({ error: 'Error al obtener el enlace más reciente' });
+  }
 });
 
 // Inicia el servidor
