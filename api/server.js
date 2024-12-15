@@ -3,6 +3,7 @@
     const bodyParser = require('body-parser');
     const { put } = require('@vercel/blob');
     const ExcelJS = require('exceljs');
+    require('dotenv').config();
 
     const app = express();
     const port = process.env.PORT || 3000;
